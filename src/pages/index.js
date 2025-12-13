@@ -31,28 +31,28 @@ const IndexPage = () => {
       <Hero
         maxWidth={'500px'}
         image={'/banner1.png'}
-        title={'Essentials for a cold winter'}
-        subtitle={'Discover Autumn Winter 2021'}
-        ctaText={'shop now'}
+        title={'Gear up for the future'}
+        subtitle={'Tech-forward apparel and accessories built for everyday performance'}
+        ctaText={'shop the drop'}
         ctaAction={goToShop}
       />
 
       {/* Message Container */}
       <div className={styles.messageContainer}>
         <p>
-          This is a demonstration of the Sydney theme for verse by{' '}
-          <span className={styles.gold}>matter design.</span>
+          Custom built for creators by{' '}
+          <span className={styles.gold}>DivUnion Tech & Apparel</span>
         </p>
         <p>
-          wear by <span className={styles.gold}>sunspel</span> and{' '}
-          <span className={styles.gold}>scotch&soda</span>
+          where breathable fabrics meet <span className={styles.gold}>smart accessories</span>{' '}
+          and <span className={styles.gold}>sleek layering pieces</span>
         </p>
       </div>
 
       {/* Collection Container */}
       <div className={styles.collectionContainer}>
         <Container size={'large'}>
-          <Title name={'New Collection'} />
+          <Title name={'Featured Techwear'} />
           <ProductCollectionGrid />
         </Container>
       </div>
@@ -79,9 +79,9 @@ const IndexPage = () => {
             altImage={'highlight image'}
             miniImage={'/highlightmin.png'}
             miniImageAlt={'mini highlight image'}
-            title={'Luxury Knitwear'}
-            description={`This soft lambswool jumper is knitted in Scotland, using yarn from one of the world's oldest spinners based in Fife`}
-            textLink={'shop now'}
+            title={'Performance Layers'}
+            description={`Adaptive fabrics, laser-cut ventilation, and water-resistant finishes built for long days between the studio and the streets.`}
+            textLink={'discover the tech'}
             link={'/shop'}
           />
         </Container>
@@ -89,26 +89,26 @@ const IndexPage = () => {
 
       {/* Promotion */}
       <div className={styles.promotionContainer}>
-        <Hero image={toOptimizedImage('/banner2.png')} title={`-50% off \n All Essentials`} />
+        <Hero image={toOptimizedImage('/banner2.png')} title={`Bundle & Save \n Core Tech Essentials`} />
         <div className={styles.linkContainers}>
-          <Link to={'/shop'}>WOMAN</Link>
-          <Link to={'/shop'}>MAN</Link>
+          <Link to={'/shop'}>APPAREL</Link>
+          <Link to={'/shop'}>GEAR</Link>
         </div>
       </div>
 
       {/* Quote */}
       <Quote
         bgColor={'var(--standard-light-grey)'}
-        title={'about Sydney'}
+        title={'about DivUnion'}
         quote={
-          '“We believe in two things: the pursuit of quality in everything we do, and looking after one another. Everything else should take care of itself.”'
+          '“We obsess over utility-first design. From recycled technical fibers to modular carry systems, every drop keeps you ready for what is next.”'
         }
       />
 
       {/* Blog Grid */}
       <div className={styles.blogsContainer}>
         <Container size={'large'}>
-          <Title name={'Journal'} subtitle={'Notes on life and style'} />
+          <Title name={'Insights'} subtitle={'Field notes on techwear, gear, and design culture'} />
           <BlogPreviewGrid data={blogData} />
         </Container>
       </div>
@@ -117,11 +117,11 @@ const IndexPage = () => {
       <div className={styles.sustainableContainer}>
         <Hero
           image={toOptimizedImage('/banner3.png')}
-          title={'We are Sustainable'}
+          title={'Responsible by default'}
           subtitle={
-            'From caring for our land to supporting our people, discover the steps we’re taking to do more for the world around us.'
+            'Recycled textiles, low-impact packaging, and transparent supply chains keep our technology-driven silhouettes grounded in responsibility.'
           }
-          ctaText={'read more'}
+          ctaText={'learn more'}
           maxWidth={'660px'}
           ctaStyle={styles.ctaCustomButton}
         />
@@ -131,7 +131,7 @@ const IndexPage = () => {
       <div className={styles.socialContainer}>
         <Title
           name={'Styled by You'}
-          subtitle={'Tag @sydney to be featured.'}
+          subtitle={'Tag @divunion to share your techwear setups.'}
         />
         <div className={styles.socialContentGrid}>
           <img src={toOptimizedImage(`/social/socialMedia1.png`)} alt={'social media 1'} />
