@@ -60,6 +60,28 @@
     margin-top: 32px;
 }
 
+.domainGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+}
+
+.domainColumn h3 {
+    margin-bottom: 8px;
+}
+
+.domainCopy {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.categoryRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
 .loadMoreContainer {
     margin-top: 80px;
     width: 160px;
@@ -111,6 +133,10 @@
     .productContainer {
         margin-left: 8px;
         margin-right: 8px;
+    }
+
+    .domainGrid {
+        grid-template-columns: 1fr;
     }
 
     .breadcrumbContainer {
