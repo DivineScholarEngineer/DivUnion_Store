@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createRef } from 'react';
 import { Link, navigate } from 'gatsby';
 
-import { isAuth } from '../../helpers/general';
+import { getSession, isAuth } from '../../helpers/general';
 
 import AddNotification from '../AddNotification';
 import Brand from '../Brand';
@@ -22,6 +22,7 @@ const Header = (prop) => {
 
   const [menu, setMenu] = useState();
   const [activeMenu, setActiveMenu] = useState();
+  const [session, setSession] = useState(null);
 
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState('');
@@ -78,6 +79,14 @@ const Header = (prop) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSearch]);
 
+  useEffect(() => {
+    if (isAuth()) {
+      setSession(getSession());
+    } else {
+      setSession(null);
+    }
+  }, [showMiniCart, mobileMenu]);
+
   return (
     <div className={styles.root}>
       <div className={styles.headerMessageContainer}>
@@ -128,33 +137,37 @@ const Header = (prop) => {
             >
               <Icon symbol={'search'}></Icon>
             </button>
-            <Link
-              aria-label="Favorites"
-              href="/account/favorites"
-              className={`${styles.iconContainer} ${styles.hideOnMobile}`}
-            >
-              <Icon symbol={'heart'}></Icon>
-            </Link>
-            <Link
-              aria-label="Orders"
-              to={isAuth() ? '/account/orders/' : '/login'}
-              className={`${styles.iconContainer} ${styles.hideOnMobile}`}
+            {isAuth() && (
+              <Link
+                aria-label="Favorites"
+                to="/account/favorites"
+                className={`${styles.iconContainer} ${styles.hideOnMobile}`}
+              >
+                <Icon symbol={'heart'}></Icon>
+              </Link>
+            )}
+            <button
+              aria-label="Profile"
+              className={`${styles.iconButton} ${styles.iconContainer} ${styles.hideOnMobile}`}
+              onClick={() => navigate(isAuth() ? '/account' : '/login')}
             >
               <Icon symbol={'user'}></Icon>
-            </Link>
-            <button
-              aria-label="Cart"
-              className={`${styles.iconButton} ${styles.iconContainer} ${styles.bagIconContainer}`}
-              onClick={() => {
-                setShowMiniCart(true);
-                setMobileMenu(false);
-              }}
-            >
-              <Icon symbol={'bag'}></Icon>
-              <div className={styles.bagNotification}>
-                <span>1</span>
-              </div>
             </button>
+            {isAuth() && (
+              <button
+                aria-label="Cart"
+                className={`${styles.iconButton} ${styles.iconContainer} ${styles.bagIconContainer}`}
+                onClick={() => {
+                  setShowMiniCart(true);
+                  setMobileMenu(false);
+                }}
+              >
+                <Icon symbol={'bag'}></Icon>
+                <div className={styles.bagNotification}>
+                  <span>1</span>
+                </div>
+              </button>
+            )}
             <div className={styles.notificationContainer}>
               <AddNotification openCart={() => setShowMiniCart(true)} />
             </div>

@@ -14,6 +14,7 @@ import { generateMockProductData } from '../../helpers/mock';
 const ORDER_STORAGE_KEY = 'orders';
 
 const OrderPage = () => {
+  const [isReady, setIsReady] = useState(false);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -22,25 +23,31 @@ const OrderPage = () => {
       return;
     }
 
-    if (typeof window !== 'undefined') {
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (isReady === true && typeof window !== 'undefined') {
       const storedOrders = window.localStorage.getItem(ORDER_STORAGE_KEY);
       if (storedOrders) {
         setOrders(JSON.parse(storedOrders));
       }
     }
-  }, []);
+  }, [isReady]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isReady === true && typeof window !== 'undefined') {
       window.localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
     }
-  }, [orders]);
+  }, [orders, isReady]);
 
   const removeOrder = (id) => {
     setOrders((prev) => prev.filter((order) => order.id !== id));
   };
 
   const recommended = generateMockProductData(3, 'featured');
+
+  if (!isReady) return null;
 
   return (
     <Layout>

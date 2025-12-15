@@ -40,6 +40,12 @@
     line-height: 17px;
 }
 
+.successMessage {
+    margin-top: 16px;
+    color: var(--success-color, #0f9d58);
+    text-align: center;
+}
+
 .forgotLink:hover {
     color: var(--standard-gold);
     border-bottom: 1px solid var(--standard-gold);

@@ -15,29 +15,34 @@ import { generateMockProductData } from '../../helpers/mock';
 const FAVORITES_STORAGE_KEY = 'favorites';
 
 const FavoritesPage = () => {
-  if (isAuth() === false) {
-    navigate('/login');
-  }
-
+  const [isReady, setIsReady] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
   const [selectedFavorite, setSelectedFavorite] = useState();
   const recommendations = generateMockProductData(4, 'featured');
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isAuth() === false) {
+      navigate('/login');
+      return;
+    }
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (isReady === true && typeof window !== 'undefined') {
       const storedFavorites = window.localStorage.getItem(FAVORITES_STORAGE_KEY);
       if (storedFavorites) {
         setFavorites(JSON.parse(storedFavorites));
       }
     }
-  }, []);
+  }, [isReady]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isReady === true && typeof window !== 'undefined') {
       window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
     }
-  }, [favorites]);
+  }, [favorites, isReady]);
 
   const removeFavorite = () => {
     setFavorites((prev) => prev.filter((fav) => fav.id !== selectedFavorite?.id));
@@ -59,6 +64,8 @@ const FavoritesPage = () => {
       return [...prev, nextFavorite];
     });
   };
+
+  if (!isReady) return null;
 
   return (
     <Layout>

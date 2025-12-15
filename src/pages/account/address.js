@@ -16,10 +16,7 @@ import Button from '../../components/Button';
 const ADDRESS_STORAGE_KEY = 'addresses';
 
 const AddressPage = () => {
-  if (isAuth() === false) {
-    navigate('/login');
-  }
-
+  const [isReady, setIsReady] = useState(false);
   const [addressList, setAddressList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -27,19 +24,28 @@ const AddressPage = () => {
   const [editingIndex, setEditingIndex] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isAuth() === false) {
+      navigate('/login');
+      return;
+    }
+
+    setIsReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (isReady === true && typeof window !== 'undefined') {
       const storedAddresses = window.localStorage.getItem(ADDRESS_STORAGE_KEY);
       if (storedAddresses) {
         setAddressList(JSON.parse(storedAddresses));
       }
     }
-  }, []);
+  }, [isReady]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isReady === true && typeof window !== 'undefined') {
       window.localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(addressList));
     }
-  }, [addressList]);
+  }, [addressList, isReady]);
 
   const closeForm = () => {
     setShowForm(false);
@@ -65,6 +71,8 @@ const AddressPage = () => {
     setShowDelete(false);
     setSelectedIndex(null);
   };
+
+  if (!isReady) return null;
 
   return (
     <Layout>

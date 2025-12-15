@@ -83,31 +83,29 @@ const ShopPage = (props) => {
           </div>
           <div className={styles.productContainer}>
             <span className={styles.mobileItemCount}>8 items</span>
-            <div className={styles.domainGrid}>
-              <div className={styles.domainColumn}>
-                <h3>Tech</h3>
-                <p className={styles.domainCopy}>
-                  Browse devices, wearables, and accessories built for the lab and the street.
-                </p>
-                <div className={styles.categoryRow}>
-                  <Chip name={'Male Tech'} />
-                  <Chip name={'Female Tech'} />
-                  <Chip name={'Tech Accessories'} />
-                </div>
-                <ProductCardGrid data={activeDomain === 'tech' ? techData : data}></ProductCardGrid>
+            <div className={styles.domainColumn}>
+              <h3>Tech</h3>
+              <p className={styles.domainCopy}>
+                Browse devices, wearables, and accessories built for the lab and the street.
+              </p>
+              <div className={styles.categoryRow}>
+                <Chip name={'Male Tech'} />
+                <Chip name={'Female Tech'} />
+                <Chip name={'Tech Accessories'} />
               </div>
-              <div className={styles.domainColumn}>
-                <h3>Apparel</h3>
-                <p className={styles.domainCopy}>
-                  Layers, outerwear, and accessories optimized for motion and comfort.
-                </p>
-                <div className={styles.categoryRow}>
-                  <Chip name={'Male Apparel'} />
-                  <Chip name={'Female Apparel'} />
-                  <Chip name={'Apparel Accessories'} />
-                </div>
-                <ProductCardGrid data={activeDomain === 'apparel' ? apparelData : data}></ProductCardGrid>
+              <ProductCardGrid data={activeDomain === 'tech' ? techData : data}></ProductCardGrid>
+            </div>
+            <div className={styles.domainColumn}>
+              <h3>Apparel</h3>
+              <p className={styles.domainCopy}>
+                Layers, outerwear, and accessories optimized for motion and comfort.
+              </p>
+              <div className={styles.categoryRow}>
+                <Chip name={'Male Apparel'} />
+                <Chip name={'Female Apparel'} />
+                <Chip name={'Apparel Accessories'} />
               </div>
+              <ProductCardGrid data={activeDomain === 'apparel' ? apparelData : data}></ProductCardGrid>
             </div>
           </div>
           <div className={styles.loadMoreContainer}>

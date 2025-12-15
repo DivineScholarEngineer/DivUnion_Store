@@ -12,23 +12,40 @@ import Layout from '../components/Layout/Layout';
 import FormInputField from '../components/FormInputField/FormInputField';
 import Button from '../components/Button';
 
-const SignupPage = (props) => {
+const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
+
+const SignupPage = () => {
   const initialState = {
-    firstName: '',
-    lastName: '',
+    username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   };
 
   const errorState = {
-    firstName: '',
-    lastName: '',
+    username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   };
 
   const [signupForm, setSignupForm] = useState(initialState);
   const [errorForm, setErrorForm] = useState(errorState);
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  const loadUsers = () => {
+    const stored = window.localStorage.getItem('du_users');
+    if (!stored) return [];
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const saveUsers = (users) => {
+    window.localStorage.setItem('du_users', JSON.stringify(users));
+  };
 
   const handleChange = (id, e) => {
     const tempForm = { ...signupForm, [id]: e };
@@ -40,13 +57,8 @@ const SignupPage = (props) => {
     let validForm = true;
     const tempError = { ...errorState };
 
-    if (isEmpty(signupForm.firstName) === true) {
-      tempError.firstName = 'Field required';
-      validForm = false;
-    }
-
-    if (isEmpty(signupForm.lastName) === true) {
-      tempError.lastName = 'Field required';
+    if (isEmpty(signupForm.username) === true) {
+      tempError.username = 'Field required';
       validForm = false;
     }
 
@@ -62,12 +74,46 @@ const SignupPage = (props) => {
       validForm = false;
     }
 
+    if (signupForm.password !== signupForm.confirmPassword) {
+      tempError.confirmPassword = 'Passwords must match exactly.';
+      validForm = false;
+    }
+
+    const users = loadUsers();
+
+    if (users.find((u) => u.username === signupForm.username)) {
+      tempError.username = 'Username already in use.';
+      validForm = false;
+    }
+
+    if (users.find((u) => u.email === signupForm.email)) {
+      tempError.email = 'Email already in use.';
+      validForm = false;
+    }
+
+    if (signupForm.email === RESERVED_MAIN_ADMIN_EMAIL && users.length > 0) {
+      tempError.email = 'This email is reserved for the main admin and cannot be reused.';
+      validForm = false;
+    }
+
     if (validForm === true) {
       setErrorForm(errorState);
+      const newUser = {
+        username: signupForm.username,
+        email: signupForm.email,
+        password: signupForm.password,
+        role: signupForm.email === RESERVED_MAIN_ADMIN_EMAIL ? 'main-admin' : 'user',
+      };
+      saveUsers([...users, newUser]);
+      setSubmitMessage(
+        newUser.role === 'main-admin'
+          ? 'Main admin account created. Full access is now available on login.'
+          : 'Account created. Please log in to continue.'
+      );
       navigate('/accountSuccess');
-      window.localStorage.setItem('key', 'sampleToken');
-      //create account endpoint
+      // account creation does not auto-login by default
     } else {
+      setSubmitMessage('');
       setErrorForm(tempError);
     }
   };
@@ -86,21 +132,12 @@ const SignupPage = (props) => {
             onSubmit={(e) => handleSubmit(e)}
           >
             <FormInputField
-              id={'firstName'}
-              value={signupForm.firstName}
+              id={'username'}
+              value={signupForm.username}
               handleChange={(id, e) => handleChange(id, e)}
               type={'input'}
-              labelName={'First Name'}
-              error={errorForm.firstName}
-            />
-
-            <FormInputField
-              id={'lastName'}
-              value={signupForm.lastName}
-              handleChange={(id, e) => handleChange(id, e)}
-              type={'input'}
-              labelName={'Last Name'}
-              error={errorForm.lastName}
+              labelName={'Username'}
+              error={errorForm.username}
             />
 
             <FormInputField
@@ -121,6 +158,15 @@ const SignupPage = (props) => {
               error={errorForm.password}
             />
 
+            <FormInputField
+              id={'confirmPassword'}
+              value={signupForm.confirmPassword}
+              handleChange={(id, e) => handleChange(id, e)}
+              type={'password'}
+              labelName={'Confirm Password'}
+              error={errorForm.confirmPassword}
+            />
+
             <Button fullWidth type={'submit'} level={'primary'}>
               create account
             </Button>
@@ -133,6 +179,7 @@ const SignupPage = (props) => {
             >
               log in
             </Button>
+            {submitMessage && <p className={styles.successMessage}>{submitMessage}</p>}
           </form>
         </div>
 

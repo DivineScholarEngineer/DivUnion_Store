@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { navigate } from 'gatsby';
 import * as styles from './settings.module.css';
 
@@ -15,10 +15,7 @@ import {
 } from '../../helpers/general';
 
 const SettingsPage = (props) => {
-  if (isAuth() === false) {
-    navigate('/login');
-  }
-
+  const [isReady, setIsReady] = useState(false);
   const initialState = {
     firstName: '',
     lastName: '',
@@ -37,6 +34,15 @@ const SettingsPage = (props) => {
 
   const [updateForm, setUpdateForm] = useState(initialState);
   const [error, setError] = useState(errorState);
+
+  useEffect(() => {
+    if (isAuth() === false) {
+      navigate('/login');
+      return;
+    }
+
+    setIsReady(true);
+  }, []);
 
   const handleChange = (id, e) => {
     const tempForm = { ...updateForm, [id]: e };
@@ -77,6 +83,8 @@ const SettingsPage = (props) => {
       setError(tempError);
     }
   };
+
+  if (!isReady) return null;
 
   return (
     <Layout>
