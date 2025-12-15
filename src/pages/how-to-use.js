@@ -7,9 +7,9 @@ import Container from '../components/Container';
 import Button from '../components/Button';
 import { toOptimizedImage } from '../helpers/general';
 
-const HowToUsePage = (props) => {
-  let builtRef = useRef();
-  let toolsRef = useRef();
+const HowToUsePage = () => {
+  const builtRef = useRef();
+  const toolsRef = useRef();
 
   const handleScroll = (elementReference) => {
     if (elementReference) {
@@ -25,7 +25,7 @@ const HowToUsePage = (props) => {
       <div className={styles.root}>
         <div className={styles.navContainer}>
           <ThemeLink onClick={() => handleScroll(builtRef)} to={'#builtby'}>
-            Who built this theme
+            Who built this experience
           </ThemeLink>
           <ThemeLink onClick={() => handleScroll(toolsRef)} to={'#tools'}>
             Compatible technologies
@@ -33,29 +33,24 @@ const HowToUsePage = (props) => {
         </div>
         <Container size={'large'} spacing={'min'}>
           <div className={styles.content} style={{ paddingTop: '80px' }}>
-            <h3>Built By Matter.</h3>
+            <h3>Built by Matter.</h3>
             <div id="#builtBy" ref={builtRef}>
               <p>
-                This theme is proudly brought to you by the team at{' '}
+                This deployment is maintained by the team at{' '}
                 <Button target={true} href="https://matterdesign.com.au/">
                   Matter Design & Digital
                 </Button>{' '}
                 (Matter.).
               </p>
               <p>
-                The Sydney theme is built for Netlify as an ecommerce theme
-                suitable for JAMStack archtitecture. This theme is free to use
-                through Netlify’s GitHub account, and can be used with any
-                ecommerce platform that support a headless architecture.
+                The DevUnion Tech build runs on a JAMStack-friendly architecture
+                suitable for headless commerce. You can pair it with platforms
+                that support tokenized APIs and server-side validation.
               </p>
               <p>
                 Matter. has pre-built connections to microservices available
-                through its JAMM.™ solution. JAMM.™ is a system built to run a
-                headless architecture. JAMM.™ can connect micro-services,
-                orchestrate data and publish websites to an edge network for
-                lighting fast performce. JAMM.™ creates a server-side rendered
-                website that is fast, stable and scalable for high traffic
-                events.
+                through its JAMM.™ solution. JAMM.™ orchestrates data securely and
+                publishes sites to an edge network for fast performance.
               </p>
               <Button target={true} href="https://jamm.matter.design/">
                 Read more about JAMM.™
@@ -70,24 +65,13 @@ const HowToUsePage = (props) => {
             <div id={'#tools'} ref={toolsRef}>
               <p>
                 Headless architecture enables Composable Commerce. What this
-                means is that you can ‘compose’ a suite of best of breed tools
-                together to create an agile ecommerce system. This approach is
-                the opposite end of the spectrum from a traditional ‘Monolithic’
-                architecture where all the functionality and data comes from one
-                source.
+                means is that you can compose a suite of best-of-breed tools
+                together to create an agile ecommerce system with clear
+                permissioning.
               </p>
               <p>
-                Why go with Composable Commerce? History has shown, technology
-                innovation comes from new specialised solutions that find better
-                ways to do things. By creating an architecture that taps into
-                this innovation, you are getting a system that is innovating
-                faster than monolithic solutions giving you a competitive
-                advantage.
-              </p>
-              <p>
-                Matter. has been innovating since 2003, and we have aligned with
-                companies that do it best. The following technologies are either
-                currently available or are on our roadmap for JAMM.™.
+                We prioritize platforms that respect unique usernames,
+                non-duplicated emails, and admin gating.
               </p>
 
               <strong>Ecommerce:</strong>
@@ -145,9 +129,9 @@ const HowToUsePage = (props) => {
               </ul>
 
               <p>
-                Our team are fanatical about site speed and the agility of a
-                composable commerce approach. If you need help to setup a
-                Headless architecture, we’d love to hear from you.
+                Our team is fanatical about site speed and the agility of a
+                composable commerce approach. If you need help to set up a
+                headless architecture, we’d love to hear from you.
               </p>
 
               <p>

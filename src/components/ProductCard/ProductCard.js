@@ -4,7 +4,7 @@ import * as styles from './ProductCard.module.css';
 
 import Icon from '../Icons/Icon';
 import CurrencyFormatter from '../CurrencyFormatter';
-import { toOptimizedImage } from '../../helpers/general';
+import { isAuth, toOptimizedImage } from '../../helpers/general';
 
 const ProductCard = (props) => {
   const [isWishlist, setIsWishlist] = useState(false);
@@ -30,6 +30,10 @@ const ProductCard = (props) => {
 
   const handleFavorite = (e) => {
     e.stopPropagation();
+    if (!isAuth()) {
+      navigate('/login');
+      return;
+    }
     setIsWishlist(!isWishlist);
   };
 

@@ -3,7 +3,7 @@ import { Link, navigate } from 'gatsby';
 
 import Config from '../../config.json';
 import Icon from '../Icons/Icon';
-import { isAuth } from '../../helpers/general';
+import { getSession, isAuth } from '../../helpers/general';
 
 //TO DO: refactor this to handle multiple nested links to avoid hardcoding 'depth'
 // have to restructure config.json
@@ -19,7 +19,7 @@ const MobileNavigation = (props) => {
   const [depth, setDepth] = useState(0);
 
   const handleLogout = () => {
-    window.localStorage.removeItem('key');
+    window.localStorage.removeItem('du_session');
     navigate('/');
     close();
   };
@@ -41,7 +41,9 @@ const MobileNavigation = (props) => {
               role={'presentation'}
               onClick={() => setDepth(-1)}
             >
-              <span className={styles.welcomeMessage}>Welcome, John</span>
+              <span className={styles.welcomeMessage}>
+                Welcome, {getSession()?.username || 'Guest'}
+              </span>
               <Icon symbol={'caret'}></Icon>
             </div>
           )}
@@ -110,12 +112,14 @@ const MobileNavigation = (props) => {
                   </Link>
                 );
               })}
-              <div className={styles.navFooter}>
-                <Link to={'/favorites'}>
-                  <Icon symbol={'heart'} />
-                  Favorites (0)
-                </Link>
-              </div>
+              {isAuth() && (
+                <div className={styles.navFooter}>
+                  <Link to={'/favorites'}>
+                    <Icon symbol={'heart'} />
+                    Favorites (0)
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 

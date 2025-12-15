@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { navigate } from 'gatsby';
 
 import Button from '../Button';
 import CurrencyFormatter from '../CurrencyFormatter';
@@ -9,7 +10,7 @@ import { generateMockProductData } from '../../helpers/mock';
 import AddItemNotificationContext from '../../context/AddItemNotificationProvider';
 
 import * as styles from './QuickView.module.css';
-import { toOptimizedImage } from '../../helpers/general';
+import { isAuth, toOptimizedImage } from '../../helpers/general';
 
 const QuickView = (props) => {
   const { close, buttonTitle = 'Add to Bag' } = props;
@@ -23,6 +24,10 @@ const QuickView = (props) => {
   const [activeSize, setActiveSize] = useState(sampleProduct.sizeOptions[0]);
 
   const handleAddToBag = () => {
+    if (!isAuth()) {
+      navigate('/login');
+      return;
+    }
     close();
     showNotification();
   };

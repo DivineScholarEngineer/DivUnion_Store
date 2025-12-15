@@ -1,5 +1,6 @@
 import { Link } from 'gatsby';
 import React from 'react';
+import { navigate } from 'gatsby';
 
 import Brand from '../components/Brand';
 import CartItem from '../components/CartItem';
@@ -7,6 +8,7 @@ import Container from '../components/Container';
 import Footer from '../components/Footer';
 import Icon from '../components/Icons/Icon';
 import OrderSummary from '../components/OrderSummary';
+import { isAuth } from '../helpers/general';
 
 import * as styles from './cart.module.css';
 
@@ -19,6 +21,22 @@ const CartPage = (props) => {
     color: 'Anthracite Melange',
     size: 'XS',
   };
+
+  if (!isAuth()) {
+    return (
+      <div className={styles.guardContainer}>
+        <Brand />
+        <div className={styles.guardCard}>
+          <h3>Bag locked</h3>
+          <p>Please log in to view or update your bag.</p>
+          <button className={styles.guardButton} onClick={() => navigate('/login')}>
+            Go to login
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, navigate } from 'gatsby';
-import { validateEmail, isEmpty } from '../helpers/general';
+import { isEmpty } from '../helpers/general';
 import * as styles from './login.module.css';
 
 import AttributeGrid from '../components/AttributeGrid/AttributeGrid';
@@ -9,14 +9,20 @@ import FormInputField from '../components/FormInputField/FormInputField';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 
-const LoginPage = (props) => {
+const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
+const MAJOR_ADMIN_EMAIL = 'major.admin@devunion.tech';
+const MAJOR_ADMIN_PASSWORD = 'devunion-major-2024';
+const MINOR_ADMIN_CODE = 'DU-ACCESS-2024';
+
+const LoginPage = () => {
   const initialState = {
-    email: '',
+    username: '',
     password: '',
+    approvalCode: '',
   };
 
   const errorState = {
-    email: '',
+    username: '',
     password: '',
   };
 
@@ -25,12 +31,38 @@ const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [adminIntent, setAdminIntent] = useState('support');
-  const [adminCode, setAdminCode] = useState('');
   const [approvalMessage, setApprovalMessage] = useState('');
+  const [pendingUser, setPendingUser] = useState(null);
+
+  const loadUsers = () => {
+    const stored = window.localStorage.getItem('du_users');
+    if (!stored) return [];
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const saveUsers = (users) => {
+    window.localStorage.setItem('du_users', JSON.stringify(users));
+  };
+
+  const persistSession = (user) => {
+    window.localStorage.setItem(
+      'du_session',
+      JSON.stringify({ username: user.username, role: user.role, email: user.email })
+    );
+  };
 
   const handleChange = (id, e) => {
     const tempForm = { ...loginForm, [id]: e };
     setLoginForm(tempForm);
+  };
+
+  const resolveUser = () => {
+    const users = loadUsers();
+    return users.find((u) => u.username === loginForm.username);
   };
 
   const handleSubmit = (e) => {
@@ -38,12 +70,11 @@ const LoginPage = (props) => {
     let validForm = true;
     const tempError = { ...errorForm };
 
-    if (validateEmail(loginForm.email) !== true) {
-      tempError.email =
-        'Please use a valid email address, such as user@example.com.';
+    if (isEmpty(loginForm.username) === true) {
+      tempError.username = 'Username required';
       validForm = false;
     } else {
-      tempError.email = '';
+      tempError.username = '';
     }
 
     if (isEmpty(loginForm.password) === true) {
@@ -55,28 +86,80 @@ const LoginPage = (props) => {
 
     if (validForm === true) {
       setErrorForm(errorState);
+      setErrorMessage('');
 
-      if (loginForm.email !== 'error@example.com') {
-        setShowLoginPrompt(true);
-        setApprovalMessage('');
-      } else {
-        window.scrollTo(0, 0);
-        setErrorMessage(
-          'There is no such account associated with this email address'
-        );
+      // Major admin (hard coded)
+      if (
+        loginForm.username === MAJOR_ADMIN_EMAIL &&
+        loginForm.password === MAJOR_ADMIN_PASSWORD
+      ) {
+        const majorAdmin = {
+          username: 'Major Admin',
+          email: MAJOR_ADMIN_EMAIL,
+          role: 'major-admin',
+        };
+        persistSession(majorAdmin);
+        navigate('/account');
+        return;
       }
+
+      const user = resolveUser();
+
+      if (!user) {
+        setErrorMessage('There is no account associated with this username.');
+        return;
+      }
+
+      if (user.password !== loginForm.password) {
+        setErrorMessage('Incorrect password.');
+        return;
+      }
+
+      setPendingUser(user);
+      setShowLoginPrompt(true);
+      setApprovalMessage('');
     } else {
       setErrorMessage('');
       setErrorForm(tempError);
     }
   };
 
+  const sendMinorAdminRequest = (user) => {
+    const stored = window.localStorage.getItem('du_minor_requests');
+    const requests = stored ? JSON.parse(stored) : [];
+    const existingRequest = requests.find((req) => req.username === user.username);
+    if (!existingRequest) {
+      requests.push({ username: user.username, email: user.email });
+      window.localStorage.setItem('du_minor_requests', JSON.stringify(requests));
+    }
+  };
+
   const handleApproval = () => {
-    if (adminIntent === 'minor-admin' && adminCode.length < 4) {
+    if (!pendingUser) return;
+
+    if (adminIntent === 'minor-admin' && loginForm.approvalCode.trim() === '') {
+      sendMinorAdminRequest(pendingUser);
+      setApprovalMessage('Request sent to the main admin. Enter the approval code when it arrives.');
+      persistSession({ ...pendingUser, role: pendingUser.role || 'user' });
+      navigate('/account');
+      return;
+    }
+
+    if (adminIntent === 'minor-admin' && loginForm.approvalCode.trim() !== '') {
+      if (loginForm.approvalCode.trim() === MINOR_ADMIN_CODE) {
+        const users = loadUsers().map((u) =>
+          u.username === pendingUser.username ? { ...u, role: 'minor-admin' } : u
+        );
+        saveUsers(users);
+        persistSession({ ...pendingUser, role: 'minor-admin' });
+        navigate('/account');
+        return;
+      }
       setApprovalMessage('Enter the approval code emailed by the main admin.');
       return;
     }
-    window.localStorage.setItem('key', 'sampleToken');
+
+    persistSession({ ...pendingUser, role: pendingUser.role || 'user' });
     navigate('/account');
   };
 
@@ -94,7 +177,7 @@ const LoginPage = (props) => {
         <div className={styles.loginFormContainer}>
           <h1 className={styles.loginTitle}>Login</h1>
           <span className={styles.subtitle}>
-            Please enter your e-mail and password
+            Please enter your username and password
           </span>
           <form
             noValidate
@@ -102,12 +185,12 @@ const LoginPage = (props) => {
             onSubmit={(e) => handleSubmit(e)}
           >
             <FormInputField
-              id={'email'}
-              value={loginForm.email}
+              id={'username'}
+              value={loginForm.username}
               handleChange={(id, e) => handleChange(id, e)}
-              type={'email'}
-              labelName={'Email'}
-              error={errorForm.email}
+              type={'text'}
+              labelName={'Username'}
+              error={errorForm.username}
             />
 
             <FormInputField
@@ -149,8 +232,8 @@ const LoginPage = (props) => {
           <h2>Confirm your sign-in</h2>
           <p>
             Choose your sign-in path. Standard users continue directly. Minor
-            admins must provide an approval code emailed by the primary admin
-            before elevated access is unlocked.
+            admins request approval and unlock access only after a code is
+            verified. Major admins sign in with the hard-coded credentials.
           </p>
 
           <div className={styles.intentGrid}>
@@ -158,7 +241,7 @@ const LoginPage = (props) => {
               <input
                 type="radio"
                 name="intent"
-                value="standard"
+                value="support"
                 checked={adminIntent === 'support'}
                 onChange={() => setAdminIntent('support')}
               />
@@ -180,12 +263,13 @@ const LoginPage = (props) => {
             <div className={styles.codeBlock}>
               <p>
                 Enter the approval code you received in your email to unlock
-                minor admin tooling.
+                minor admin tooling. If you do not have one yet, submitting will
+                send a request to the main admin.
               </p>
               <FormInputField
-                id={'admin-code'}
-                value={adminCode}
-                handleChange={(_, e) => setAdminCode(e)}
+                id={'approvalCode'}
+                value={loginForm.approvalCode}
+                handleChange={(id, e) => handleChange(id, e)}
                 labelName={'Approval code'}
                 placeholder={'XXXX-XXXX'}
               />
