@@ -7,14 +7,14 @@ import * as styles from './OrderItem.module.css';
 import { toOptimizedImage } from '../../helpers/general';
 
 const OrderItem = (props) => {
-  const { headerStyling, order } = props;
+  const { headerStyling, order, onDelete } = props;
   const [collapsed, setCollapsed] = useState(false);
 
-  let computedTotal = 0;
-  for (let x = 0; x < order.items.length; x++) {
-    computedTotal =
-      computedTotal + order.items[x].price * order.items[x].quantity;
-  }
+  const items = order?.items || [];
+  const computedTotal = items.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
+  );
 
   const pad = (str, max) => {
     str = str.toString();
@@ -34,9 +34,9 @@ const OrderItem = (props) => {
       >
         <div className={styles.orderMeta}>
           <span className={styles.orderId}>Order #{pad(order.id, 5)}</span>
-          <span
-            className={styles.orderTotalMeta}
-          >{`${order.items.length} products totaling `}</span>
+            <span className={styles.orderTotalMeta}>
+              {`${items.length} products totaling `}
+            </span>
           <span className={styles.total}>
             <CurrencyFormatter amount={computedTotal}></CurrencyFormatter>
           </span>
@@ -63,6 +63,18 @@ const OrderItem = (props) => {
           collapsed === false ? styles.hide : styles.show
         }`}
       >
+        <div className={styles.actionRow}>
+          {onDelete && (
+            <button
+              type={'button'}
+              className={styles.deleteButton}
+              onClick={() => onDelete(order.id)}
+            >
+              Delete order
+            </button>
+          )}
+        </div>
+
         <div className={styles.addressDetailContainer}>
           <div className={styles.addressContainer}>
             <span className={styles.addressMeta}>Ship to</span>
@@ -95,7 +107,7 @@ const OrderItem = (props) => {
         </div>
 
         <div className={styles.itemList}>
-          {order.items.map((item, index) => {
+          {items.map((item, index) => {
             return (
               <div className={styles.itemContainer} key={index}>
                 <div

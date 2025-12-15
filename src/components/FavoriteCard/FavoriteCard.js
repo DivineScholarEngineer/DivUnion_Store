@@ -8,7 +8,7 @@ import { toOptimizedImage } from '../../helpers/general';
 
 const FavoriteCard = (props) => {
   const [showQuickView, setShowQuickView] = useState(false);
-  const { color, size, img, alt, showConfirmDialog } = props;
+  const { color, size, img, alt, showConfirmDialog, name, meta } = props;
   return (
     <div className={styles.root}>
       <div>
@@ -16,8 +16,12 @@ const FavoriteCard = (props) => {
           <img src={toOptimizedImage(img)} alt={alt} />
         </div>
         <div className={styles.metaContainer}>
-          <span>Color: {color}</span>
-          <span>Size: {size}</span>
+          {name && <span className={styles.itemName}>{name}</span>}
+          {meta?.length > 0 && (
+            <span className={styles.metaLine}>{meta.join(' • ')}</span>
+          )}
+          {color && <span>Color: {color}</span>}
+          {size && <span>Size: {size}</span>}
         </div>
       </div>
       <div className={styles.actionContainer}>

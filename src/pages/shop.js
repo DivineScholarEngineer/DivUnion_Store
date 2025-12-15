@@ -16,7 +16,7 @@ import Config from '../config.json';
 
 const ShopPage = (props) => {
   const [showFilter, setShowFilter] = useState(false);
-  const data = generateMockProductData(6, 'woman');
+  const data = generateMockProductData(6, 'featured');
 
   useEffect(() => {
     window.addEventListener('keydown', escapeHandler);
@@ -36,22 +36,22 @@ const ShopPage = (props) => {
             <Breadcrumbs
               crumbs={[
                 { link: '/', label: 'Home' },
-                { link: '/', label: 'Woman' },
-                { label: 'Sweaters' },
+                { link: '/', label: 'Gear' },
+                { label: 'Featured Systems' },
               ]}
             />
           </div>
         </Container>
         <Banner
           maxWidth={'650px'}
-          name={`Woman's Sweaters`}
+          name={`Signal-first essentials`}
           subtitle={
-            'Look to our women’s sweaters for modern takes on one-and-done dressing. From midis in bold prints to dramatic floor-sweeping styles and easy all-in-ones, our edit covers every mood.'
+            'Modular hubs, wearable bands, and ambient lighting tuned for builders who want clean setups without distractions.'
           }
         />
         <Container size={'large'} spacing={'min'}>
           <div className={styles.metaContainer}>
-            <span className={styles.itemCount}>476 items</span>
+            <span className={styles.itemCount}>8 items</span>
             <div className={styles.controllerContainer}>
               <div
                 className={styles.iconContainer}
@@ -79,7 +79,7 @@ const ShopPage = (props) => {
             <Chip name={'S'} />
           </div>
           <div className={styles.productContainer}>
-            <span className={styles.mobileItemCount}>476 items</span>
+            <span className={styles.mobileItemCount}>8 items</span>
             <ProductCardGrid data={data}></ProductCardGrid>
           </div>
           <div className={styles.loadMoreContainer}>

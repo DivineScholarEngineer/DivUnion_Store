@@ -18,7 +18,7 @@ import { Link, navigate } from 'gatsby';
 import { toOptimizedImage } from '../helpers/general';
 
 const IndexPage = () => {
-  const newArrivals = generateMockProductData(3, 'shirt');
+  const newArrivals = generateMockProductData(3, 'featured');
   const blogData = generateMockBlogData(3);
 
   const goToShop = () => {
@@ -30,9 +30,9 @@ const IndexPage = () => {
       {/* Hero Container */}
       <Hero
         maxWidth={'500px'}
-        image={'/banner1.png'}
-        title={'Gear up for the future'}
-        subtitle={'Tech-forward apparel and accessories built for everyday performance'}
+        image={'/tech/hero-primary.svg'}
+        title={'Signal-first gear for builders'}
+        subtitle={'Circuits, sensors, and carry built to keep makers in flow'}
         ctaText={'shop the drop'}
         ctaAction={goToShop}
       />
@@ -74,22 +74,22 @@ const IndexPage = () => {
       {/* Highlight  */}
       <div className={styles.highlightContainer}>
         <Container size={'large'} fullMobile>
-          <Highlight
-            image={'/highlight.png'}
-            altImage={'highlight image'}
-            miniImage={'/highlightmin.png'}
-            miniImageAlt={'mini highlight image'}
-            title={'Performance Layers'}
-            description={`Adaptive fabrics, laser-cut ventilation, and water-resistant finishes built for long days between the studio and the streets.`}
-            textLink={'discover the tech'}
-            link={'/shop'}
-          />
+            <Highlight
+              image={'/tech/highlight.svg'}
+              altImage={'highlight image'}
+              miniImage={'/tech/highlight-mini.svg'}
+              miniImageAlt={'mini highlight image'}
+              title={'Performance Systems'}
+              description={`Circuit-inspired silhouettes, modular docks, and responsive textiles that move as quickly as your ideas.`}
+              textLink={'discover the drop'}
+              link={'/shop'}
+            />
         </Container>
       </div>
 
       {/* Promotion */}
       <div className={styles.promotionContainer}>
-        <Hero image={toOptimizedImage('/banner2.png')} title={`Bundle & Save \n Core Tech Essentials`} />
+        <Hero image={toOptimizedImage('/tech/feature-grid.svg')} title={`Bundle & Save \n Core Tech Essentials`} />
         <div className={styles.linkContainers}>
           <Link to={'/shop'}>APPAREL</Link>
           <Link to={'/shop'}>GEAR</Link>
@@ -116,10 +116,10 @@ const IndexPage = () => {
       {/* Promotion */}
       <div className={styles.sustainableContainer}>
         <Hero
-          image={toOptimizedImage('/banner3.png')}
+          image={toOptimizedImage('/tech/responsible.svg')}
           title={'Responsible by default'}
           subtitle={
-            'Recycled textiles, low-impact packaging, and transparent supply chains keep our technology-driven silhouettes grounded in responsibility.'
+            'Low-energy circuitry, recycled composites, and transparent supply chains keep every build grounded in responsibility.'
           }
           ctaText={'learn more'}
           maxWidth={'660px'}
@@ -134,10 +134,10 @@ const IndexPage = () => {
           subtitle={'Tag @divunion to share your techwear setups.'}
         />
         <div className={styles.socialContentGrid}>
-          <img src={toOptimizedImage(`/social/socialMedia1.png`)} alt={'social media 1'} />
-          <img src={toOptimizedImage(`/social/socialMedia2.png`)} alt={'social media 2'} />
-          <img src={toOptimizedImage(`/social/socialMedia3.png`)} alt={'social media 3'} />
-          <img src={toOptimizedImage(`/social/socialMedia4.png`)} alt={'social media 4'} />
+          <img src={toOptimizedImage(`/tech/social/social1.svg`)} alt={'social media 1'} />
+          <img src={toOptimizedImage(`/tech/social/social2.svg`)} alt={'social media 2'} />
+          <img src={toOptimizedImage(`/tech/social/social3.svg`)} alt={'social media 3'} />
+          <img src={toOptimizedImage(`/tech/social/social4.svg`)} alt={'social media 4'} />
         </div>
       </div>
       <AttributeGrid />

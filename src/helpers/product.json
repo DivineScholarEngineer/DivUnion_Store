@@ -1,115 +1,72 @@
 [
-    {
-        "productCode": "MJUM8066-GYDZ",
-        "name": "Lambswool Crew Neck Jumper",
-        "vendor": "Sunspel",
-        "price": 75,
-        "alt": "lambswool crew neck jumper",
-        "image": "/products/pdp1.jpeg",
-        "colorOptions": [
-            {"color": "#000000", "title": "Anthracite Melange"},
-            {"color": "#4D34AE", "title": "Pale Purple"},
-            {"color": "#488266", "title": "Green Moss"}
-        ],
-        "sizeOptions": ["xs", "s", "m", "l", "xl"],
-        "wishlist": true,
-        "tags": ["sample"],
-        "gallery": [
-            {"image": "/products/pdp1.jpeg", "alt": "pdp description 1"},
-            {"image": "/products/pdp2.jpeg", "alt": "pdp description 2"},
-            {"image": "/products/pdp3.jpeg", "alt": "pdp description 3"},
-            {"image": "/products/pdp4.jpeg", "alt": "pdp description 4"}
-        ],
-        "description": "This soft lambswool jumper is knitted in Scotland, using yarn from one of the world's oldest spinners based in Fife. Once knitted, the garment is washed in Scottish spring water to make it beautifully soft."
-    },
-    {
-        "name": "Classic T-Shirt",
-        "price": 75,
-        "alt": "classic t-shirt 1",
-        "image": "/products/shirt1.jpg",
-        "tags": ["shirt", "men"]
-    },
-    {
-        "name": "Classic T-Shirt",
-        "price": 75,
-        "alt": "classic t-shirt 2",
-        "image": "/products/shirt2.jpg",
-        "tags": ["shirt", "men"]
-    },
-    {
-        "name": "Classic T-Shirt",
-        "price": 75,
-        "alt": "classic t-shirt 3",
-        "image": "/products/shirt3.jpg",
-        "tags": ["shirt", "men"]
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 13.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman1.jpeg",
-        "tags": ["woman"],
-        "meta": "+ 2 colors"
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 15.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman2.jpeg",
-        "tags": ["woman"]
-    },    
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 13.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman3.jpeg",
-        "tags": ["woman"],
-        "meta": "+ 2 colors"
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 15.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman4.jpeg",
-        "tags": ["woman"]
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 15.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman5.jpeg",
-        "tags": ["woman"],
-        "originalPrice": 31.50
-
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 21,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman6.jpeg",
-        "tags": ["woman"]
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 15.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman3.jpeg",
-        "tags": ["woman"]
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 15.90,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman2.jpeg",
-        "tags": ["woman"],
-        "originalPrice": 31.50
-
-    },
-    {
-        "name": "Relaxed-fit graphic T-shirt",
-        "price": 21,
-        "alt": "relaxed t shirt woman",
-        "image": "/products/woman1.jpeg",
-        "tags": ["woman"]
-    }
-  ]
+  {
+    "productCode": "DU-CORE-001",
+    "name": "Photon Control Hub",
+    "vendor": "DivUnion Labs",
+    "price": 329,
+    "alt": "photon control hub",
+    "image": "/products/tech-device1.svg",
+    "colorOptions": [
+      { "color": "#5AF0FF", "title": "Arctic" },
+      { "color": "#8C7BFF", "title": "Iris" }
+    ],
+    "sizeOptions": ["s", "m", "l"],
+    "wishlist": true,
+    "tags": ["featured", "hardware", "desk", "sample"],
+    "gallery": [
+      { "image": "/products/tech-device1.svg", "alt": "photon hub hero" },
+      { "image": "/products/tech-device2.svg", "alt": "photon hub angle" },
+      { "image": "/products/tech-device3.svg", "alt": "photon hub ports" }
+    ],
+    "description": "Modular desktop gateway with adaptive mesh routing and on-device encryption." 
+  },
+  {
+    "name": "Adaptive Signal Router",
+    "price": 289,
+    "alt": "adaptive signal router",
+    "image": "/products/tech-device2.svg",
+    "tags": ["featured", "hardware", "networking"]
+  },
+  {
+    "name": "Holographic Display Deck",
+    "price": 199,
+    "alt": "holographic display deck",
+    "image": "/products/tech-device3.svg",
+    "tags": ["featured", "workspace"]
+  },
+  {
+    "name": "BioSync Wearable Band",
+    "price": 129,
+    "alt": "biosync wearable band",
+    "image": "/products/tech-device4.svg",
+    "tags": ["wearable", "health"]
+  },
+  {
+    "name": "Quantum Foam Speaker",
+    "price": 159,
+    "alt": "quantum foam speaker",
+    "image": "/products/tech-device3.svg",
+    "tags": ["audio", "desk"]
+  },
+  {
+    "name": "Lumen Circuit Backpack",
+    "price": 189,
+    "alt": "lumen circuit backpack",
+    "image": "/products/tech-device1.svg",
+    "tags": ["wearable", "travel"]
+  },
+  {
+    "name": "Flux Thermal Mug",
+    "price": 45,
+    "alt": "flux thermal mug",
+    "image": "/products/tech-device2.svg",
+    "tags": ["accessory", "desk"]
+  },
+  {
+    "name": "Signal Field Notebook",
+    "price": 22,
+    "alt": "signal field notebook",
+    "image": "/products/tech-device4.svg",
+    "tags": ["accessory"]
+  }
+]

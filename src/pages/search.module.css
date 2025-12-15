@@ -18,3 +18,9 @@
     font-size: 14px;
     line-height: 17px;
 }
+
+.noResults {
+    text-align: center;
+    color: var(--grey-crumb);
+    margin: -32px 0 40px 0;
+}

@@ -16,6 +16,15 @@
     margin-bottom: 8px;
 }
 
+.itemName {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.metaLine {
+    color: var(--grey-crumb);
+}
+
 .imageContainer {
     height: 580px;
     width: 100%;

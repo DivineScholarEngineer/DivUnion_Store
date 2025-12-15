@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { navigate } from 'gatsby';
 import * as styles from './favorites.module.css';
 
@@ -9,35 +9,56 @@ import FavoriteCard from '../../components/FavoriteCard/FavoriteCard';
 import Layout from '../../components/Layout/Layout';
 import Modal from '../../components/Modal';
 
-import { isAuth } from '../../helpers/general';
+import { isAuth, toOptimizedImage } from '../../helpers/general';
+import { generateMockProductData } from '../../helpers/mock';
 
-const FavoritesPage = (props) => {
-  const sampleFavorite1 = {
-    color: 'Anthracite Melange',
-    size: 'XS',
-    img: '/products/shirt1.jpg',
-    alt: 'favorite 1',
-  };
+const FAVORITES_STORAGE_KEY = 'favorites';
 
-  const sampleFavorite2 = {
-    color: 'Purple Pale',
-    size: 'XS',
-    img: '/products/shirt2.jpg',
-    alt: 'favorite 2',
-  };
-
-  const sampleFavorite3 = {
-    color: 'Moss Green',
-    size: 'S',
-    img: '/products/shirt3.jpg',
-    alt: 'favorite 3',
-  };
-
+const FavoritesPage = () => {
   if (isAuth() === false) {
     navigate('/login');
   }
 
+  const [favorites, setFavorites] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
+  const [selectedFavorite, setSelectedFavorite] = useState();
+  const recommendations = generateMockProductData(4, 'featured');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedFavorites = window.localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (storedFavorites) {
+        setFavorites(JSON.parse(storedFavorites));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    }
+  }, [favorites]);
+
+  const removeFavorite = () => {
+    setFavorites((prev) => prev.filter((fav) => fav.id !== selectedFavorite?.id));
+    setShowDelete(false);
+  };
+
+  const addFavorite = (product) => {
+    setFavorites((prev) => {
+      if (prev.find((fav) => fav.id === product.name)) return prev;
+
+      const nextFavorite = {
+        id: product.name,
+        name: product.name,
+        img: product.image,
+        alt: product.alt || product.name,
+        meta: product.tags,
+      };
+
+      return [...prev, nextFavorite];
+    });
+  };
 
   return (
     <Layout>
@@ -50,23 +71,54 @@ const FavoritesPage = (props) => {
             ]}
           />
           <h1>Favorites</h1>
+          {favorites.length === 0 && (
+            <p className={styles.emptyState}>
+              Keep this space blank until you intentionally save something. We&apos;ll remember your picks until you remove them.
+            </p>
+          )}
           <div className={styles.favoriteListContainer}>
-            <FavoriteCard
-              showConfirmDialog={() => setShowDelete(true)}
-              {...sampleFavorite1}
-            />
-            <FavoriteCard
-              showConfirmDialog={() => setShowDelete(true)}
-              {...sampleFavorite2}
-            />
-            <FavoriteCard
-              showConfirmDialog={() => setShowDelete(true)}
-              {...sampleFavorite3}
-            />
-            <FavoriteCard
-              showConfirmDialog={() => setShowDelete(true)}
-              {...sampleFavorite2}
-            />
+            {favorites.map((favorite) => (
+              <FavoriteCard
+                key={favorite.id}
+                {...favorite}
+                showConfirmDialog={() => {
+                  setSelectedFavorite(favorite);
+                  setShowDelete(true);
+                }}
+              />
+            ))}
+          </div>
+
+          <div className={styles.recommendations}>
+            <h3>Recommended essentials</h3>
+            <p className={styles.recommendationCopy}>
+              Add items you love without leaving this page. Nothing resets unless you delete it.
+            </p>
+            <div className={styles.recommendationGrid}>
+              {recommendations.map((product) => {
+                const alreadySaved = favorites.some((fav) => fav.id === product.name);
+
+                return (
+                  <div className={styles.recommendationCard} key={product.name}>
+                    <div className={styles.recommendationImage}>
+                      <img src={toOptimizedImage(product.image)} alt={product.alt} />
+                    </div>
+                    <div className={styles.recommendationMeta}>
+                      <span className={styles.recommendationName}>{product.name}</span>
+                      <span className={styles.recommendationTags}>{product.tags?.join(' • ')}</span>
+                    </div>
+                    <Button
+                      fullWidth
+                      level={alreadySaved ? 'secondary' : 'primary'}
+                      onClick={() => addFavorite(product)}
+                      disabled={alreadySaved}
+                    >
+                      {alreadySaved ? 'Saved' : 'Save to favorites'}
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </Container>
       </div>
@@ -74,11 +126,12 @@ const FavoritesPage = (props) => {
         <div className={styles.confirmDeleteContainer}>
           <h4>Remove from Favorites?</h4>
           <p>
-            Are you sure you want to remove this from your favorites? You cannot
-            undo this action once you press <strong>'Delete'</strong>
+            Are you sure you want to remove this from your favorites? You cannot undo this action once you press <strong>
+              'Delete'
+            </strong>
           </p>
           <div className={styles.actionContainer}>
-            <Button onClick={() => setShowDelete(false)} level={'primary'}>
+            <Button onClick={removeFavorite} level={'primary'}>
               Delete
             </Button>
             <Button onClick={() => setShowDelete(false)} level={'secondary'}>
