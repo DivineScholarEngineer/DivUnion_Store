@@ -70,12 +70,29 @@ function isEmpty(input) {
  */
 function isAuth() {
   const isBrowser = typeof window !== 'undefined';
-  if (isBrowser) {
-    const token = window.localStorage.getItem('key');
-    if (token) return true;
-    else return false;
-  } else {
-    return true;
+  if (!isBrowser) return false;
+
+  const session = window.localStorage.getItem('du_session');
+  if (!session) return false;
+
+  try {
+    const parsedSession = JSON.parse(session);
+    return Boolean(parsedSession?.username && parsedSession?.role);
+  } catch (error) {
+    return false;
+  }
+}
+
+function getSession() {
+  const isBrowser = typeof window !== 'undefined';
+  if (!isBrowser) return null;
+  const session = window.localStorage.getItem('du_session');
+  if (!session) return null;
+
+  try {
+    return JSON.parse(session);
+  } catch (error) {
+    return null;
   }
 }
 
@@ -89,9 +106,9 @@ function isAuth() {
  */
 function toOptimizedImage(imageUrl) {
   if (!imageUrl.startsWith('/') || imageUrl.endsWith("imgcdn=true")) return imageUrl;
-  return imageUrl + 
-          (imageUrl.includes("?") ? "&" : "?") + 
+  return imageUrl +
+          (imageUrl.includes("?") ? "&" : "?") +
           "imgcdn=true";
 }
 
-export { isNumeric, validateEmail, validateStrongPassword, isEmpty, isAuth, toOptimizedImage };
+export { isNumeric, validateEmail, validateStrongPassword, isEmpty, isAuth, getSession, toOptimizedImage };

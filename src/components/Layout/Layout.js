@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 
@@ -10,6 +10,17 @@ import * as styles from './Layout.module.css';
 import './Globals.css';
 
 const Layout = ({ props, children, disablePaddingBottom = false }) => {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    if (!window.localStorage.getItem('du_db_initialized')) {
+      window.localStorage.setItem('du_users', JSON.stringify([]));
+      window.localStorage.setItem('du_minor_requests', JSON.stringify([]));
+      window.localStorage.removeItem('du_session');
+      window.localStorage.setItem('du_db_initialized', 'true');
+    }
+  }, []);
+
   return (
     <>
       <Helmet>

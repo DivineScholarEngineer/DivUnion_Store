@@ -7,10 +7,10 @@ import Layout from '../components/Layout/Layout';
 
 import * as styles from './about.module.css';
 import { toOptimizedImage } from '../helpers/general';
-const AboutPage = (props) => {
-  let historyRef = useRef();
-  let valuesRef = useRef();
-  let sustainabilityRef = useRef();
+const AboutPage = () => {
+  const historyRef = useRef();
+  const valuesRef = useRef();
+  const sustainabilityRef = useRef();
 
   const handleScroll = (elementReference) => {
     if (elementReference) {
@@ -28,12 +28,12 @@ const AboutPage = (props) => {
         <Hero
           maxWidth={'900px'}
           image={'/about.png'}
-          title={`Sydney \n A British brand since 1860`}
+          title={`DevUnion Tech \n Built for creators and operators`}
         />
 
         <div className={styles.navContainer}>
           <ThemeLink onClick={() => handleScroll(historyRef)} to={'#history'}>
-            History
+            Our story
           </ThemeLink>
           <ThemeLink onClick={() => handleScroll(valuesRef)} to={'#values'}>
             Values
@@ -42,29 +42,29 @@ const AboutPage = (props) => {
             onClick={() => handleScroll(sustainabilityRef)}
             to={'#sustainability'}
           >
-            Sustainability
+            Integrity
           </ThemeLink>
         </div>
 
         <Container size={'large'} spacing={'min'}>
           <div className={styles.detailContainer} ref={historyRef}>
             <p>
-              Founded in 1860, Sydney is an innovative British brand with a
-              contemporary edge. We make timeless everyday luxury clothing.
+              DevUnion Tech was founded to blend hardware, textiles, and software
+              into a single calm experience. We prototype quickly, cut what
+              doesn&apos;t serve builders, and obsess over reliability.
             </p>
             <br />
             <br />
             <p>
-              We created some of the world's first T-shirts and spent decades
-              perfecting the feel of the cotton. Today we are the only brand
-              that makes T-shirts in its own factory in the UK. And we do this
-              in the same factory we have occupied since 1937.
+              Our teams work across signal processing, wearable interfaces, and
+              modular carry systems. Every drop is tested in real labs and daily
+              commutes before it makes it to the store.
             </p>
           </div>
         </Container>
 
         <div className={styles.imageContainer}>
-          <img alt={'shirt brand'} src={toOptimizedImage('/about1.png')}></img>
+          <img alt={'DevUnion workshop'} src={toOptimizedImage('/about1.png')}></img>
         </div>
 
         <Container size={'large'} spacing={'min'}>
@@ -72,54 +72,36 @@ const AboutPage = (props) => {
             <h3>Our Values</h3>
             <div ref={valuesRef}>
               <p>
-                Sunspel produced some of the world's earliest T-shirts. In the
-                late 1800s the business made luxury tunics and undershirts from
-                lightweight Sea Island cotton for export to the Far East and
-                other warm climates. While these garments initially had silk
-                buttoned plackets, these were removed in the early 1900s and
-                replaced with simple bound necks to reduce manufacturing costs -
-                creating the T-shirt. We've supplied the world as the T-shirt
-                has evolved from underwear to outerwear, from symbol of youthful
-                rebellion to everyday wardrobe staple, and we've spent decades
-                refining its every last aspect.
+                We value clarity, durability, and permissioned access. Systems
+                are built to protect user roles first, then scale performance.
               </p>
               <ol>
-                <li>Be an ecowear</li>
-                <li>Sophisticated and not mass-produced</li>
-                <li>Only natural materials</li>
+                <li>Keep data locked down and auditable.</li>
+                <li>Design for everyday use, not just launch day.</li>
+                <li>Ship responsibly sourced materials and code.</li>
               </ol>
-              <img alt={'founder'} src={toOptimizedImage('/about2.png')}></img>
+              <img alt={'DevUnion team'} src={toOptimizedImage('/about2.png')}></img>
             </div>
-            <h3>Sustainability</h3>
+            <h3>Integrity</h3>
             <div id={'#sustainability'} ref={sustainabilityRef}>
               <p>
-                Our founder, Thomas Hill, had both an eye for quality and a
-                desire to innovate. As well as using the finest fibres such as
-                Sea Island cotton, cashmere and silk, he invented his own
-                fabrics. Sunspel continues this commitment to innovation today
-                and our unique fabrics include: Q100 Sea Island cotton, Q82
-                Supima cotton, Q75 warp knit mesh cotton and Q14 warp knit
-                cellular cotton. The technology behind these fabrics remains
-                unchanged today and all Sunspel products use the finest cottons,
-                wools and fibres.
+                From recycled technical fabrics to transparent admin controls,
+                DevUnion Tech keeps sustainability and security paired together.
               </p>
               <p>
-                Made in Long Eaton, England and crafted from our luxurious long
-                staple Supima cotton for unparalleled softness, comfort and
-                durability, the Sunspel T-shirt has a classic fit and only the
-                most essential details.{' '}
+                Admin roles cannot be self-assigned; every change is reviewed so
+                customers always know who controls their data and orders.
               </p>
               <p>
-                With over 100 years spent perfecting fabric, fit and style, the
-                Sunspel Classic T-shirt is recognised as the finest in the
-                world.
+                This discipline keeps the platform ready for the next wave of
+                features without compromising trust.
               </p>
             </div>
           </div>
         </Container>
 
         <div className={styles.imageContainer}>
-          <img alt={'shirt backwards'} src={toOptimizedImage('/about3.png')}></img>
+          <img alt={'DevUnion prototype'} src={toOptimizedImage('/about3.png')}></img>
         </div>
       </div>
     </Layout>
