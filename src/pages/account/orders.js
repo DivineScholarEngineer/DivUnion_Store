@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link, navigate } from 'gatsby';
 import * as styles from './orders.module.css';
 
 import AccountLayout from '../../components/AccountLayout/AccountLayout';
@@ -6,79 +7,40 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import Layout from '../../components/Layout/Layout';
 import OrderItem from '../../components/OrderItem/OrderItem';
 import { isAuth } from '../../helpers/general';
-import { navigate } from 'gatsby';
+import Title from '../../components/Title';
+import ProductCardGrid from '../../components/ProductCardGrid';
+import { generateMockProductData } from '../../helpers/mock';
 
-const OrderPage = (props) => {
-  if (isAuth() === false) {
-    navigate('/login');
-  }
+const ORDER_STORAGE_KEY = 'orders';
 
-  const sampleOrder1 = {
-    id: '2',
-    orderPlaced: 'Oct 12, 2021',
-    lastUpdate: 'Oct 12, 2021',
-    status: 'pending',
-    items: [
-      {
-        image: '/products/shirt1.jpg',
-        alt: 'order 1 product 1',
-        name: 'Lambswool Crew Neck Jumper',
-        quantity: '2',
-        price: '100',
-      },
-      {
-        image: '/products/shirt2.jpg',
-        alt: 'order 1 product 2',
-        name: 'Lambswool Crew Neck Jumper',
-        quantity: '1',
-        price: '300',
-      },
-    ],
-    shippingAddress: {
-      name: 'John Doe',
-      address: '1 Steam Mill Lane, Haymerket',
-      postal: '2000',
-      state: 'NSW',
-      country: 'Australia',
-    },
-    billingAddress: {
-      name: 'John Doe',
-      address: '1 Steam Mill Lane, Haymerket',
-      postal: '2000',
-      state: 'NSW',
-      country: 'Australia',
-    },
+const OrderPage = () => {
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    if (isAuth() === false) {
+      navigate('/login');
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      const storedOrders = window.localStorage.getItem(ORDER_STORAGE_KEY);
+      if (storedOrders) {
+        setOrders(JSON.parse(storedOrders));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
+    }
+  }, [orders]);
+
+  const removeOrder = (id) => {
+    setOrders((prev) => prev.filter((order) => order.id !== id));
   };
 
-  const sampleOrder2 = {
-    id: '1',
-    orderPlaced: 'Oct 11, 2021',
-    lastUpdate: 'Oct 11, 2021',
-    status: 'pending',
-    items: [
-      {
-        image: '/products/shirt1.jpg',
-        alt: 'order 1 product 1',
-        name: 'Lambswool Crew Neck Jumper',
-        quantity: '2',
-        price: '100',
-      },
-    ],
-    shippingAddress: {
-      name: 'John Doe',
-      address: '1 Steam Mill Lane, Haymerket',
-      postal: '2000',
-      state: 'NSW',
-      country: 'Australia',
-    },
-    billingAddress: {
-      name: 'John Doe',
-      address: '1 Steam Mill Lane, Haymerket',
-      postal: '2000',
-      state: 'NSW',
-      country: 'Australia',
-    },
-  };
+  const recommended = generateMockProductData(3, 'featured');
 
   return (
     <Layout>
@@ -91,15 +53,38 @@ const OrderPage = (props) => {
           ]}
         />
         <h1>Orders</h1>
-        <div className={`${styles.tableHeaderContainer} ${styles.gridStyle}`}>
-          <span className={styles.tableHeader}>Order #</span>
-          <span className={styles.tableHeader}>Order Placed</span>
-          <span className={styles.tableHeader}>Last Update</span>
-          <span className={styles.tableHeader}>Status</span>
-        </div>
 
-        <OrderItem order={sampleOrder1} headerStyling={styles.gridStyle} />
-        <OrderItem order={sampleOrder2} headerStyling={styles.gridStyle} />
+        {orders.length > 0 && (
+          <div className={`${styles.tableHeaderContainer} ${styles.gridStyle}`}>
+            <span className={styles.tableHeader}>Order #</span>
+            <span className={styles.tableHeader}>Order Placed</span>
+            <span className={styles.tableHeader}>Last Update</span>
+            <span className={styles.tableHeader}>Status</span>
+          </div>
+        )}
+
+        {orders.length === 0 ? (
+          <div className={styles.emptyState}>
+            <h3>You&apos;re all clear</h3>
+            <p>
+              Stay logged in and browse whenever you&apos;re ready. We&apos;ll keep this space blank until you place your first
+              order.
+            </p>
+            <div className={styles.emptyActions}>
+              <Link className={styles.shopLink} to={'/shop'}>
+                Browse gear
+              </Link>
+            </div>
+            <div className={styles.recommendations}>
+              <Title name={'Recommended builds'} subtitle={'Signal-driven picks to get started'} />
+              <ProductCardGrid showSlider={false} columns={3} height={420} data={recommended} />
+            </div>
+          </div>
+        ) : (
+          orders.map((order) => (
+            <OrderItem key={order.id} order={order} headerStyling={styles.gridStyle} onDelete={() => removeOrder(order.id)} />
+          ))
+        )}
       </AccountLayout>
     </Layout>
   );

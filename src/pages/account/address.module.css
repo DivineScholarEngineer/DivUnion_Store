@@ -5,6 +5,14 @@
     gap: 16px;
 }
 
+.emptyState {
+    grid-column: 1 / -1;
+    background: var(--bg-grey);
+    color: var(--grey-crumb);
+    padding: 16px;
+    border-radius: 12px;
+}
+
 .addCard {
     background-color: var(--bg-grey);
     min-height: 180px;

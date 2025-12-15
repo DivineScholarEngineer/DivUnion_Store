@@ -1,0 +1,28 @@
+<svg width="1400" height="750" viewBox="0 0 1400 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#041227"/>
+      <stop offset="100%" stop-color="#0D204A"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5AF0FF"/>
+      <stop offset="100%" stop-color="#8C7BFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="750" rx="24" fill="url(#bg4)"/>
+  <rect x="120" y="110" width="1160" height="530" rx="22" stroke="#7BD0FF" stroke-opacity="0.35" stroke-width="2"/>
+  <rect x="200" y="190" width="440" height="350" rx="20" fill="#0E1B3A" stroke="#5AF0FF" stroke-opacity="0.4" stroke-width="2"/>
+  <rect x="760" y="190" width="440" height="350" rx="20" fill="#0E1B3A" stroke="#7F8CFF" stroke-opacity="0.4" stroke-width="2"/>
+  <rect x="240" y="240" width="360" height="64" rx="14" fill="url(#signal)" fill-opacity="0.75"/>
+  <rect x="800" y="240" width="360" height="64" rx="14" fill="#132B5E" stroke="#8C7BFF" stroke-opacity="0.6" stroke-width="2"/>
+  <path d="M200 350H640" stroke="#9BF6FF" stroke-width="3" stroke-dasharray="12 10" stroke-opacity="0.55"/>
+  <path d="M760 350H1200" stroke="#7BD0FF" stroke-width="3" stroke-dasharray="12 10" stroke-opacity="0.55"/>
+  <path d="M200 410H640" stroke="#9BF6FF" stroke-width="3" stroke-dasharray="12 10" stroke-opacity="0.35"/>
+  <path d="M760 410H1200" stroke="#7BD0FF" stroke-width="3" stroke-dasharray="12 10" stroke-opacity="0.35"/>
+  <rect x="520" y="470" width="360" height="56" rx="16" fill="#1A2E64" stroke="#7BD0FF" stroke-opacity="0.55" stroke-width="2"/>
+  <rect x="560" y="490" width="280" height="20" rx="10" fill="#132347"/>
+  <circle cx="200" cy="190" r="10" fill="#5AF0FF"/>
+  <circle cx="1200" cy="190" r="10" fill="#7F8CFF"/>
+  <circle cx="200" cy="540" r="10" fill="#7BD0FF"/>
+  <circle cx="1200" cy="540" r="10" fill="#9BF6FF"/>
+</svg>

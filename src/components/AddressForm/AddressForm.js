@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './AddressForm.module.css';
 
 import Button from '../Button';
 import FormInputField from '../FormInputField';
 
 const AddressForm = (props) => {
-  const { closeForm } = props;
+  const { closeForm, onSave, initialAddress } = props;
 
   const initialState = {
     name: '',
@@ -25,8 +25,12 @@ const AddressForm = (props) => {
     company: '',
   };
 
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState(initialAddress || initialState);
   const [errorForm, setErrorForm] = useState(errorState);
+
+  useEffect(() => {
+    setForm(initialAddress || initialState);
+  }, [initialAddress]);
 
   const handleChange = (id, e) => {
     const tempForm = { ...form, [id]: e };
@@ -35,7 +39,22 @@ const AddressForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorForm(errorState);
+    const tempError = { ...errorState };
+    let validForm = true;
+
+    ['name', 'address', 'country', 'state', 'postal'].forEach((field) => {
+      if (!form[field]) {
+        tempError[field] = 'Field required';
+        validForm = false;
+      }
+    });
+
+    setErrorForm(tempError);
+
+    if (validForm === false) return;
+
+    onSave?.(form);
+    setForm(initialState);
     closeForm();
   };
 

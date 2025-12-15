@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { navigate } from 'gatsby';
 import * as styles from './address.module.css';
 
@@ -13,32 +13,58 @@ import Modal from '../../components/Modal';
 import { isAuth } from '../../helpers/general';
 import Button from '../../components/Button';
 
-const AddressPage = (props) => {
-  const address1 = {
-    name: 'John Doe',
-    address: '123 Steam Mill Lane, Haymerket',
-    state: 'NSW',
-    postal: '2000',
-    country: 'Australia',
-    company: '',
-  };
+const ADDRESS_STORAGE_KEY = 'addresses';
 
-  const address2 = {
-    name: 'John Doe',
-    address: '123 Steam Mill Lane, Haymerket',
-    state: 'NSW',
-    postal: '2000',
-    country: 'Australia',
-    company: 'Matter Design',
-  };
-
-  const [addressList] = useState([address1, address2]);
-  const [showForm, setShowForm] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
-
+const AddressPage = () => {
   if (isAuth() === false) {
     navigate('/login');
   }
+
+  const [addressList, setAddressList] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedAddresses = window.localStorage.getItem(ADDRESS_STORAGE_KEY);
+      if (storedAddresses) {
+        setAddressList(JSON.parse(storedAddresses));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(addressList));
+    }
+  }, [addressList]);
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingIndex(null);
+  };
+
+  const handleSaveAddress = (address) => {
+    setAddressList((prev) => {
+      if (editingIndex !== null) {
+        const nextAddresses = [...prev];
+        nextAddresses[editingIndex] = { ...nextAddresses[editingIndex], ...address };
+        return nextAddresses;
+      }
+
+      return [...prev, { ...address, id: Date.now().toString() }];
+    });
+  };
+
+  const handleDelete = () => {
+    if (selectedIndex !== null) {
+      setAddressList((prev) => prev.filter((_, index) => index !== selectedIndex));
+    }
+    setShowDelete(false);
+    setSelectedIndex(null);
+  };
 
   return (
     <Layout>
@@ -54,11 +80,23 @@ const AddressPage = (props) => {
 
         {showForm === false && (
           <div className={styles.addressListContainer}>
-            {addressList.map((address) => {
+            {addressList.length === 0 && (
+              <p className={styles.emptyState}>
+                No saved locations yet. Add only what you need and we&apos;ll keep it here until you delete it.
+              </p>
+            )}
+            {addressList.map((address, index) => {
               return (
                 <AddressCard
-                  showForm={() => setShowForm(true)}
-                  showDeleteForm={() => setShowDelete(true)}
+                  key={address.id || `${address.name}-${index}`}
+                  showForm={() => {
+                    setEditingIndex(index);
+                    setShowForm(true);
+                  }}
+                  showDeleteForm={() => {
+                    setSelectedIndex(index);
+                    setShowDelete(true);
+                  }}
                   {...address}
                 />
               );
@@ -66,7 +104,10 @@ const AddressPage = (props) => {
             <div
               className={styles.addCard}
               role={'presentation'}
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                setEditingIndex(null);
+                setShowForm(true);
+              }}
             >
               <Icon symbol={'plus'}></Icon>
               <span>new address</span>
@@ -75,18 +116,23 @@ const AddressPage = (props) => {
         )}
 
         {showForm === true && (
-          <AddressForm closeForm={() => setShowForm(false)} />
+          <AddressForm
+            closeForm={closeForm}
+            onSave={handleSaveAddress}
+            initialAddress={editingIndex !== null ? addressList[editingIndex] : null}
+          />
         )}
       </AccountLayout>
       <Modal visible={showDelete} close={() => setShowDelete(false)}>
         <div className={styles.confirmDeleteContainer}>
           <h4>Delete Address?</h4>
           <p>
-            Are you sure you want to delete this address? You cannot undo this
-            action once you press <strong>'Delete'</strong>
+            Are you sure you want to delete this address? You cannot undo this action once you press <strong>
+              'Delete'
+            </strong>
           </p>
           <div className={styles.actionContainer}>
-            <Button onClick={() => setShowDelete(false)} level={'primary'}>
+            <Button onClick={handleDelete} level={'primary'}>
               Delete
             </Button>
             <Button onClick={() => setShowDelete(false)} level={'secondary'}>

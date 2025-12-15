@@ -11,7 +11,7 @@ import { isAuth } from '../../helpers/general';
 import { generateMockProductData } from '../../helpers/mock';
 
 const RecentlyViewedPage = (props) => {
-  const recentlyViewed = generateMockProductData(3, 'shirt');
+  const recentlyViewed = generateMockProductData(3, 'featured');
 
   if (isAuth() === false) {
     navigate('/login');

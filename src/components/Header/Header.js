@@ -29,9 +29,9 @@ const Header = (prop) => {
   const searchRef = createRef();
   const bannerMessage = 'Free shipping worldwide';
   const searchSuggestions = [
-    'Oversize sweaters',
-    'Lama Pajamas',
-    'Candles Cinnamon',
+    'Photon Control Hub',
+    'BioSync Wearable Band',
+    'Quantum Foam Speaker',
   ];
 
   const handleHover = (navObject) => {
@@ -137,7 +137,7 @@ const Header = (prop) => {
             </Link>
             <Link
               aria-label="Orders"
-              href={isAuth() ? '/login' : '/account/orders/'}
+              to={isAuth() ? '/account/orders/' : '/login'}
               className={`${styles.iconContainer} ${styles.hideOnMobile}`}
             >
               <Icon symbol={'user'}></Icon>

@@ -70,6 +70,28 @@
     cursor: pointer;
 }
 
+.actionRow {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 8px 12px;
+}
+
+.deleteButton {
+    background: transparent;
+    border: 1px solid var(--bg-light-gray);
+    color: var(--standard-black);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all ease-in-out 0.2s;
+}
+
+.deleteButton:hover {
+    border-color: var(--standard-gold);
+    color: var(--standard-gold);
+}
+
 .addressDetailContainer {
     display: flex;
 }

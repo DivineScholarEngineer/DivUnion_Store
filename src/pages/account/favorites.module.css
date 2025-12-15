@@ -16,6 +16,65 @@
     gap: 32px 16px;
 }
 
+.emptyState {
+    text-align: center;
+    color: var(--grey-crumb);
+    margin: -16px 0 32px 0;
+}
+
+.recommendations {
+    margin-top: 48px;
+}
+
+.recommendations h3 {
+    margin-bottom: 0;
+}
+
+.recommendationCopy {
+    color: var(--grey-crumb);
+    margin: 4px 0 20px 0;
+}
+
+.recommendationGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.recommendationCard {
+    border: 1px solid var(--bg-light-gray);
+    background: var(--standard-white);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.recommendationImage img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: var(--bg-grey);
+}
+
+.recommendationMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.recommendationName {
+    font-weight: 600;
+}
+
+.recommendationTags {
+    color: var(--grey-crumb);
+    font-size: 13px;
+}
+
 .confirmDeleteContainer {
     padding: 32px;
     display: flex;
