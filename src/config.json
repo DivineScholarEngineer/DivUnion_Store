@@ -68,47 +68,47 @@
       "menuLink": "/shop",
       "category": [
         {
-          "categoryLabel": "woman",
+          "categoryLabel": "tech",
           "submenu": [
             {
-              "menuLabel": "All clothing",
+              "menuLabel": "All tech",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "sweatshirts & hoodies",
+              "menuLabel": "wearables",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "jackets",
+              "menuLabel": "hubs & stations",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "trousers",
+              "menuLabel": "sensors",
               "menuLink": "/shop"
             }
           ]
         },
         {
-          "categoryLabel": "men",
+          "categoryLabel": "apparel",
           "submenu": [
             {
-              "menuLabel": "All clothing",
+              "menuLabel": "All apparel",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "sweatshirts & hoodies",
+              "menuLabel": "outerwear",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "jackets",
+              "menuLabel": "layering essentials",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "trousers",
+              "menuLabel": "technical pants",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "pants",
+              "menuLabel": "performance tops",
               "menuLink": "/shop"
             }
           ]
@@ -117,11 +117,11 @@
           "categoryLabel": "accessories",
           "submenu": [
             {
-              "menuLabel": "caps & scarves",
+              "menuLabel": "tech accessories",
               "menuLink": "/shop"
             },
             {
-              "menuLabel": "bags",
+              "menuLabel": "apparel accessories",
               "menuLink": "/shop"
             }
           ]

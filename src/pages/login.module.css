@@ -3,6 +3,47 @@
     margin: 40px auto 128px auto;
 }
 
+.modalContainer {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modalContainer h2 {
+    margin: 0;
+}
+
+.intentGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.radioRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.codeBlock {
+    background: var(--standard-light-grey);
+    padding: 16px;
+    border-radius: 6px;
+    display: grid;
+    gap: 12px;
+}
+
+.modalActions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.inlineError {
+    color: var(--error);
+    font-weight: 500;
+}
+
 .loginTitle {
     font-weight: normal;
     font-size: 52px;

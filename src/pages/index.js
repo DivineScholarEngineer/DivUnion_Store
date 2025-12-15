@@ -20,9 +20,49 @@ import { toOptimizedImage } from '../helpers/general';
 const IndexPage = () => {
   const newArrivals = generateMockProductData(3, 'featured');
   const blogData = generateMockBlogData(3);
+  const [theme, setTheme] = React.useState('light');
+
+  const featureList = [
+    'Animated product previews that loop smoothly for tech and apparel.',
+    'Dynamic category filtering across Tech and Apparel lanes.',
+    'Personalized welcome banner greeting returning users.',
+    'Quick-switch toggle between light and dark themes.',
+    'Integrated user feedback form for suggestions.',
+    'Wishlist saver to pin tech or apparel drops.',
+    'Tech and apparel bundle discounts surfaced in promos.',
+    'Featured products carousel per category.',
+    'User profile overview with order history and admin status.',
+    'FAQ rollup and support chat entry point.',
+    'Notification center callout for order updates and admin messages.',
+    'SEO-friendly copy blocks for tech and apparel links.',
+    'Admin dashboard summary tiles (placeholder).',
+    'Multi-language copy hooks baked into CTA buttons.',
+    'Lightweight CMS callout for adding new products.',
+  ];
+
+  const extraFeatureList = [
+    'Inventory-aware badges for low-stock tech gear.',
+    'Bundle builder for mixing accessories and apparel.',
+    'Minor admin tooling reminder panel.',
+    'Chatbot teaser explaining DivUnion expertise.',
+    'Quick-save outfit presets.',
+    'Audio-ready tech accessory highlights.',
+    'Order status timeline preview.',
+    'Pro setup recommendations per category.',
+    'Sustainability footnotes for apparel materials.',
+    'Guided sizing overlay for apparel buyers.',
+  ];
 
   const goToShop = () => {
     navigate('/shop');
+  };
+
+  React.useEffect(() => {
+    document.body.dataset.theme = theme;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   return (
@@ -47,6 +87,37 @@ const IndexPage = () => {
           where breathable fabrics meet <span className={styles.gold}>smart accessories</span>{' '}
           and <span className={styles.gold}>sleek layering pieces</span>
         </p>
+        <div className={styles.themeToggle}>
+          <span>Theme:</span>
+          <button type="button" onClick={toggleTheme}>
+            {theme === 'light' ? 'Switch to Dark' : 'Switch to Light'}
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.featuresContainer}>
+        <Container size={'large'}>
+          <Title
+            name={'Experience upgrades'}
+            subtitle={'A quick glimpse of the tech-forward UX features we are rolling out.'}
+          />
+          <div className={styles.featureGrid}>
+            {featureList.map((item, index) => (
+              <div key={index} className={styles.featureCard}>
+                <span className={styles.featureNumber}>{index + 1}</span>
+                <p>{item}</p>
+              </div>
+            ))}
+          </div>
+          <div className={styles.featureGrid}>
+            {extraFeatureList.map((item, index) => (
+              <div key={index} className={styles.featureCardAlt}>
+                <span className={styles.featureNumber}>+{index + 1}</span>
+                <p>{item}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
       </div>
 
       {/* Collection Container */}

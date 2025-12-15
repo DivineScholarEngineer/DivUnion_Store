@@ -7,6 +7,7 @@ import AttributeGrid from '../components/AttributeGrid/AttributeGrid';
 import Layout from '../components/Layout/Layout';
 import FormInputField from '../components/FormInputField/FormInputField';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
 
 const LoginPage = (props) => {
   const initialState = {
@@ -22,6 +23,10 @@ const LoginPage = (props) => {
   const [loginForm, setLoginForm] = useState(initialState);
   const [errorForm, setErrorForm] = useState(errorState);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [adminIntent, setAdminIntent] = useState('support');
+  const [adminCode, setAdminCode] = useState('');
+  const [approvalMessage, setApprovalMessage] = useState('');
 
   const handleChange = (id, e) => {
     const tempForm = { ...loginForm, [id]: e };
@@ -51,10 +56,9 @@ const LoginPage = (props) => {
     if (validForm === true) {
       setErrorForm(errorState);
 
-      //mock login
       if (loginForm.email !== 'error@example.com') {
-        navigate('/account');
-        window.localStorage.setItem('key', 'sampleToken');
+        setShowLoginPrompt(true);
+        setApprovalMessage('');
       } else {
         window.scrollTo(0, 0);
         setErrorMessage(
@@ -65,6 +69,15 @@ const LoginPage = (props) => {
       setErrorMessage('');
       setErrorForm(tempError);
     }
+  };
+
+  const handleApproval = () => {
+    if (adminIntent === 'minor-admin' && adminCode.length < 4) {
+      setApprovalMessage('Enter the approval code emailed by the main admin.');
+      return;
+    }
+    window.localStorage.setItem('key', 'sampleToken');
+    navigate('/account');
   };
 
   return (
@@ -130,6 +143,69 @@ const LoginPage = (props) => {
           <AttributeGrid />
         </div>
       </div>
+
+      <Modal visible={showLoginPrompt} close={() => setShowLoginPrompt(false)}>
+        <div className={styles.modalContainer}>
+          <h2>Confirm your sign-in</h2>
+          <p>
+            Choose your sign-in path. Standard users continue directly. Minor
+            admins must provide an approval code emailed by the primary admin
+            before elevated access is unlocked.
+          </p>
+
+          <div className={styles.intentGrid}>
+            <label className={styles.radioRow}>
+              <input
+                type="radio"
+                name="intent"
+                value="standard"
+                checked={adminIntent === 'support'}
+                onChange={() => setAdminIntent('support')}
+              />
+              <span>Standard user (shop & track orders)</span>
+            </label>
+            <label className={styles.radioRow}>
+              <input
+                type="radio"
+                name="intent"
+                value="minor-admin"
+                checked={adminIntent === 'minor-admin'}
+                onChange={() => setAdminIntent('minor-admin')}
+              />
+              <span>Request minor admin review</span>
+            </label>
+          </div>
+
+          {adminIntent === 'minor-admin' && (
+            <div className={styles.codeBlock}>
+              <p>
+                Enter the approval code you received in your email to unlock
+                minor admin tooling.
+              </p>
+              <FormInputField
+                id={'admin-code'}
+                value={adminCode}
+                handleChange={(_, e) => setAdminCode(e)}
+                labelName={'Approval code'}
+                placeholder={'XXXX-XXXX'}
+              />
+            </div>
+          )}
+
+          <div className={styles.modalActions}>
+            <Button level={'secondary'} onClick={() => setShowLoginPrompt(false)}>
+              Back
+            </Button>
+            <Button level={'primary'} onClick={handleApproval}>
+              Continue
+            </Button>
+          </div>
+
+          {approvalMessage !== '' && (
+            <span className={styles.inlineError}>{approvalMessage}</span>
+          )}
+        </div>
+      </Modal>
     </Layout>
   );
 };
