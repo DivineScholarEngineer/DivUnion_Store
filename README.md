@@ -53,7 +53,7 @@ Click the button below and it will help you create a new repo, create a new Netl
   Finally, you can run your project locally with:
 
   ```shell
-  cd gatsby-sydney-ecommerce-theme/
+  cd gatsby-ecommerce-theme/
   npm start or yarn start
   ```
   

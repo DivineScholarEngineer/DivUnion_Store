@@ -11,7 +11,7 @@ const BlogPage = () => {
       <div className={styles.root}>
         <div className={styles.blankState}>
           <Title
-            name={'DevUnion Journal'}
+            name={'DivUnion Journal'}
             subtitle={'This space is reserved for future admin-approved entries.'}
           />
           <p className={styles.placeholder}>No journal entries are available yet.</p>

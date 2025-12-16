@@ -28,7 +28,7 @@ const AboutPage = () => {
         <Hero
           maxWidth={'900px'}
           image={'/about.png'}
-          title={`DevUnion Tech \n Built for creators and operators`}
+          title={`DivUnion Tech \n Built for creators and operators`}
         />
 
         <div className={styles.navContainer}>
@@ -49,7 +49,7 @@ const AboutPage = () => {
         <Container size={'large'} spacing={'min'}>
           <div className={styles.detailContainer} ref={historyRef}>
             <p>
-              DevUnion Tech was founded to blend hardware, textiles, and software
+              DivUnion Tech was founded to blend hardware, textiles, and software
               into a single calm experience. We prototype quickly, cut what
               doesn&apos;t serve builders, and obsess over reliability.
             </p>
@@ -64,7 +64,7 @@ const AboutPage = () => {
         </Container>
 
         <div className={styles.imageContainer}>
-          <img alt={'DevUnion workshop'} src={toOptimizedImage('/about1.png')}></img>
+          <img alt={'DivUnion workshop'} src={toOptimizedImage('/about1.png')}></img>
         </div>
 
         <Container size={'large'} spacing={'min'}>
@@ -80,13 +80,13 @@ const AboutPage = () => {
                 <li>Design for everyday use, not just launch day.</li>
                 <li>Ship responsibly sourced materials and code.</li>
               </ol>
-              <img alt={'DevUnion team'} src={toOptimizedImage('/about2.png')}></img>
+              <img alt={'DivUnion team'} src={toOptimizedImage('/about2.png')}></img>
             </div>
             <h3>Integrity</h3>
             <div id={'#sustainability'} ref={sustainabilityRef}>
               <p>
                 From recycled technical fabrics to transparent admin controls,
-                DevUnion Tech keeps sustainability and security paired together.
+                DivUnion Tech keeps sustainability and security paired together.
               </p>
               <p>
                 Admin roles cannot be self-assigned; every change is reviewed so
@@ -101,7 +101,7 @@ const AboutPage = () => {
         </Container>
 
         <div className={styles.imageContainer}>
-          <img alt={'DevUnion prototype'} src={toOptimizedImage('/about3.png')}></img>
+          <img alt={'DivUnion prototype'} src={toOptimizedImage('/about3.png')}></img>
         </div>
       </div>
     </Layout>

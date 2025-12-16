@@ -38,7 +38,7 @@ const AdminLayout = ({ children, sidebar, title }) => {
         <div className={styles.brandBlock}>
           <div className={styles.brandMark}>DU</div>
           <div className={styles.brandText}>
-            <span className={styles.brandTitle}>DevUnion Tech — Admin Panel</span>
+            <span className={styles.brandTitle}>DivUnion Tech — Admin Panel</span>
             <span className={styles.brandSubtitle}>Secure controls for the main administrator</span>
           </div>
         </div>
