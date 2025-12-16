@@ -43,7 +43,7 @@ const HowToUsePage = () => {
                 (Matter.).
               </p>
               <p>
-                The DevUnion Tech build runs on a JAMStack-friendly architecture
+                The DivUnion Tech build runs on a JAMStack-friendly architecture
                 suitable for headless commerce. You can pair it with platforms
                 that support tokenized APIs and server-side validation.
               </p>
@@ -57,7 +57,7 @@ const HowToUsePage = () => {
               </Button>
               <img
                 alt={'JAMM Detail'}
-                src={toOptimizedImage('/how-to-use/jamm-sydney-1upd@2x.png')}
+                src={toOptimizedImage('/how-to-use/jamm-1upd@2x.png')}
                 style={{ display: 'block', height: 'auto' }}
               />
             </div>

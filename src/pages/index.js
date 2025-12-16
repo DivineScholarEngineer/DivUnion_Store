@@ -26,7 +26,7 @@ const IndexPage = () => {
       <Hero
         maxWidth={'520px'}
         image={'/tech/hero-primary.svg'}
-        title={'DevUnion Tech'}
+        title={'DivUnion Tech'}
         subtitle={'Signal-first gear, apparel, and accessories built for builders.'}
         ctaText={'Shop the collection'}
         ctaAction={goToShop}
@@ -36,7 +36,7 @@ const IndexPage = () => {
         <Container size={'large'}>
           <p className={styles.tagline}>Vertical, brand-first, and ready to scroll.</p>
           <p className={styles.supporting}>
-            DevUnion Tech anchors every drop with secure roles, locked-down carts,
+            DivUnion Tech anchors every drop with secure roles, locked-down carts,
             and responsive layouts so guests, users, and admins always know where they stand.
           </p>
         </Container>

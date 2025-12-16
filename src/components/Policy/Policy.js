@@ -7,13 +7,13 @@ const Policy = (props) => {
       <div className={styles.section}>
         <h3>1. How we handle your data</h3>
         <p>
-          DevUnion Tech collects only the information you voluntarily provide
+          DivUnion Tech collects only the information you voluntarily provide
           when creating an account or checking out. We never resell data and we
           store as little as possible to operate the experience.
         </p>
         <p>
           This privacy summary explains how your details are collected, used,
-          and stored when you use DevUnion Tech services. All validation and
+          and stored when you use DivUnion Tech services. All validation and
           permission checks are enforced server-side in the production system.
         </p>
         <p>
@@ -23,7 +23,7 @@ const Policy = (props) => {
       </div>
 
       <div className={styles.section}>
-        <h3>2. Who can use DevUnion</h3>
+        <h3>2. Who can use DivUnion</h3>
         <p>
           Our storefront and account tools are intended for people over 18. If
           you are younger, a parent or guardian must manage the account and
@@ -39,7 +39,7 @@ const Policy = (props) => {
       <div className={styles.section}>
         <h3>3. Responsible use</h3>
         <p>
-          Help us keep DevUnion Tech secure by avoiding fraud, impersonation,
+          Help us keep DivUnion Tech secure by avoiding fraud, impersonation,
           and unauthorized data access. Accounts cannot self-assign admin
           privileges and any abuse is removed from the system.
         </p>

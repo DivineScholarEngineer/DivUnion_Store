@@ -29,7 +29,7 @@ const MinorAdminLayout = ({ children, sidebar, session }) => {
         <div className={styles.brandBlock}>
           <div className={styles.brandMark}>DU</div>
           <div className={styles.brandCopy}>
-            <span className={styles.brandTitle}>DevUnion Tech — Minor Admin</span>
+            <span className={styles.brandTitle}>DivUnion Tech — Minor Admin</span>
             <span className={styles.brandSubtitle}>
               Limited controls with shopper UI fully hidden. Switch back to User mode anytime.
             </span>

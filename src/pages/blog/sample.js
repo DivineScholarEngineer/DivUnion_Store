@@ -10,7 +10,7 @@ const SamplePage = () => {
     <Layout>
       <div className={styles.root}>
         <div className={styles.blankState}>
-          <Title name={'DevUnion Journal'} subtitle={'Entries will appear once approved by admins.'} />
+          <Title name={'DivUnion Journal'} subtitle={'Entries will appear once approved by admins.'} />
           <p className={styles.placeholder}>There is no published content yet.</p>
         </div>
       </div>

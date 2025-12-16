@@ -291,7 +291,7 @@ const approveRequest = (request) => {
       <div id="journal" className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2>Journal management</h2>
-          <span className={styles.muted}>Create, edit, publish, and remove DevUnion Journal entries</span>
+          <span className={styles.muted}>Create, edit, publish, and remove DivUnion Journal entries</span>
         </div>
         <form onSubmit={handleJournalSubmit} className={styles.gridTwo}>
           <FormInputField

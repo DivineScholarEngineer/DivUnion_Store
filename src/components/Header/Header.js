@@ -165,7 +165,7 @@ const Header = (prop) => {
             <div className={styles.modeBadge}>
               <span className={styles.badgeDot} />
               <div>
-                <span className={styles.badgeTitle}>DevUnion Tech — Minor Admin</span>
+                <span className={styles.badgeTitle}>DivUnion Tech — Minor Admin</span>
                 <span className={styles.badgeSubtitle}>User browsing is disabled while admin tools are open</span>
               </div>
             </div>

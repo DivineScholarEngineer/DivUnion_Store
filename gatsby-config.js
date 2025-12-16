@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `DevUnion Tech`,
+    title: `DivUnion Tech`,
     siteUrl: `https://jamm.matter.design`,
   },
   plugins: [],

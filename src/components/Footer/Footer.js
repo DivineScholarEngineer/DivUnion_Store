@@ -159,7 +159,7 @@ const Footer = (prop) => {
                   ></img>
                 )}
               </div>
-              <span>© DevUnion Tech. All rights reserved.</span>
+              <span>© DivUnion Tech. All rights reserved.</span>
             </div>
           </div>
         </Container>
