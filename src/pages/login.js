@@ -30,6 +30,7 @@ const LoginPage = () => {
   const [errorForm, setErrorForm] = useState(errorState);
   const [errorMessage, setErrorMessage] = useState('');
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showAdminPrompt, setShowAdminPrompt] = useState(false);
   const [adminIntent, setAdminIntent] = useState('support');
   const [approvalMessage, setApprovalMessage] = useState('');
   const [pendingUser, setPendingUser] = useState(null);
@@ -117,9 +118,9 @@ const LoginPage = () => {
 
       // Main admins should bypass the intent prompt and land directly in the account
       // area with their elevated role intact.
-      if (user.role === 'main-admin') {
-        persistSession(user);
-        navigate('/account');
+      if (user.role === 'main-admin' || user.email === RESERVED_MAIN_ADMIN_EMAIL) {
+        setPendingUser({ ...user, role: 'main-admin' });
+        setShowAdminPrompt(true);
         return;
       }
 
@@ -168,6 +169,19 @@ const LoginPage = () => {
     }
 
     persistSession({ ...pendingUser, role: pendingUser.role || 'user' });
+    navigate('/account');
+  };
+
+  const handleAdminPath = (destination) => {
+    if (!pendingUser) return;
+
+    persistSession({ ...pendingUser, role: 'main-admin' });
+
+    if (destination === 'admin') {
+      navigate('/admin');
+      return;
+    }
+
     navigate('/account');
   };
 
@@ -296,6 +310,29 @@ const LoginPage = () => {
           {approvalMessage !== '' && (
             <span className={styles.inlineError}>{approvalMessage}</span>
           )}
+        </div>
+      </Modal>
+
+      <Modal visible={showAdminPrompt} close={() => setShowAdminPrompt(false)}>
+        <div className={styles.modalContainer}>
+          <h2>Choose your experience</h2>
+          <p>
+            We detected you&apos;re the main admin. You can continue into the admin
+            panel for site controls or browse as a regular user. Pick a path to
+            finish signing in.
+          </p>
+
+          <div className={styles.modalActions}>
+            <Button level={'primary'} onClick={() => handleAdminPath('admin')}>
+              Go to admin panel
+            </Button>
+            <Button
+              level={'secondary'}
+              onClick={() => handleAdminPath('user')}
+            >
+              Continue as a user
+            </Button>
+          </div>
         </div>
       </Modal>
     </Layout>
