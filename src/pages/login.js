@@ -115,6 +115,14 @@ const LoginPage = () => {
         return;
       }
 
+      // Main admins should bypass the intent prompt and land directly in the account
+      // area with their elevated role intact.
+      if (user.role === 'main-admin') {
+        persistSession(user);
+        navigate('/account');
+        return;
+      }
+
       setPendingUser(user);
       setShowLoginPrompt(true);
       setApprovalMessage('');
