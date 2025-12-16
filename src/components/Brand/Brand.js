@@ -10,7 +10,7 @@ const Brand = () => {
       role={'presentation'}
       onClick={() => navigate('/')}
     >
-      <h4 className={styles.wordmark}>DivUnion Tech</h4>
+      <h1 className={`${styles.brandTitle} brand-title`}>DivUnion Tech</h1>
       <svg
         width={127}
         height={24}
