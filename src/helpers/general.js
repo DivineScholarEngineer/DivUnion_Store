@@ -72,6 +72,7 @@ function isEmpty(input) {
  */
 const SESSION_COLLECTION_KEY = 'du_sessions';
 const ACTIVE_SESSION_KEY = 'du_active_session_id';
+const DEFAULT_ROLE_MODE = 'user';
 
 function generateSessionId() {
   return `du_sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
@@ -113,7 +114,7 @@ function getActiveSessionId() {
 function persistSession(user) {
   if (typeof window === 'undefined') return null;
 
-  const session = { ...user, id: generateSessionId() };
+  const session = { ...user, mode: user.mode || DEFAULT_ROLE_MODE, id: generateSessionId() };
   const sessions = getStoredSessions();
 
   saveStoredSessions([...sessions, session]);
@@ -163,7 +164,7 @@ function getSession() {
   }
 
   const activeSession = storedSessions.find((session) => session.id === activeSessionId);
-  if (activeSession) return activeSession;
+  if (activeSession) return { ...activeSession, mode: activeSession.mode || DEFAULT_ROLE_MODE };
 
   window.sessionStorage.removeItem(ACTIVE_SESSION_KEY);
   return null;
@@ -175,6 +176,33 @@ function isAuth() {
   if (!session) return false;
 
   return Boolean(session?.username && session?.role);
+}
+
+function updateActiveSession(payload) {
+  if (typeof window === 'undefined') return null;
+
+  const activeSessionId = getActiveSessionId();
+  if (!activeSessionId) return null;
+
+  const sessions = getStoredSessions();
+  const updatedSessions = sessions.map((session) =>
+    session.id === activeSessionId ? { ...session, ...payload } : session
+  );
+
+  saveStoredSessions(updatedSessions);
+
+  const activeSession = updatedSessions.find((session) => session.id === activeSessionId);
+  return activeSession ? { ...activeSession, mode: activeSession.mode || DEFAULT_ROLE_MODE } : null;
+}
+
+function getActiveMode() {
+  const session = getSession();
+  return session?.mode || DEFAULT_ROLE_MODE;
+}
+
+function setActiveMode(mode) {
+  if (!mode) return getActiveMode();
+  return updateActiveSession({ mode });
 }
 
 /**
@@ -202,4 +230,7 @@ export {
   toOptimizedImage,
   persistSession,
   clearActiveSession,
+  getActiveMode,
+  setActiveMode,
+  updateActiveSession,
 };

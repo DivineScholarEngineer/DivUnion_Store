@@ -211,6 +211,48 @@
     font-size: 9px;
 }
 
+.modeNotice {
+    cursor: default;
+    border-bottom-color: transparent;
+    color: var(--grey-crumb);
+}
+
+.modeBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--standard-black);
+    color: var(--standard-white);
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.badgeDot {
+    width: 10px;
+    height: 10px;
+    background: #35c37c;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.badgeTitle {
+    display: block;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.badgeSubtitle {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.iconDisabled {
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
 @media (max-width: 800px) {
     .mobileMenuContainer {
         display: block;
