@@ -31,6 +31,8 @@ const normalizeRequest = (request) => ({
   code: request.code || null,
   expiresAt: request.expiresAt || null,
   delivered: request.delivered ?? false,
+  deliveryError: request.deliveryError || null,
+  redeemedAt: request.redeemedAt || null,
 });
 
 const loadMinorRequests = () => {
@@ -39,6 +41,53 @@ const loadMinorRequests = () => {
 };
 
 const saveMinorRequests = (requests) => saveToStorage(REQUESTS_KEY, requests);
+
+const loadRegisteredUsers = () => {
+  if (typeof window === 'undefined') return [];
+  const stored = window.localStorage.getItem('du_users');
+  if (!stored) return [];
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    return [];
+  }
+};
+
+const resolveRegisteredEmail = (username) => {
+  const users = loadRegisteredUsers();
+  const matched = users.find((user) => user.username === username);
+  return matched?.email || null;
+};
+
+const isEmailConfigValid = () =>
+  Boolean(
+    ADMIN_EMAIL_CONFIG.address &&
+      ADMIN_EMAIL_CONFIG.appPassword &&
+      !ADMIN_EMAIL_CONFIG.appPassword.includes('YOUR_APP_PASSWORD')
+  );
+
+const sendApprovalEmail = ({ username, email, code, expiresAt }) => {
+  if (!email) {
+    return { sent: false, reason: 'missing-recipient' };
+  }
+
+  if (!isEmailConfigValid()) {
+    recordNotification({
+      username,
+      email,
+      code,
+      expiresAt,
+      status: 'failed',
+      reason: 'missing-credentials',
+    });
+    return { sent: false, reason: 'missing-credentials' };
+  }
+
+  recordNotification({ username, email, code, expiresAt, status: 'queued' });
+
+  return { sent: true };
+};
 
 const generateCode = () => {
   const randomSegment = () => Math.random().toString(36).slice(2, 6).toUpperCase();
@@ -83,6 +132,7 @@ const addPendingRequest = ({ username, email }) => {
     code: null,
     expiresAt: null,
     delivered: false,
+    redeemedAt: null,
   };
 
   const updated = [newRequest, ...current];
@@ -92,28 +142,42 @@ const addPendingRequest = ({ username, email }) => {
 
 const approveMinorRequest = (request) => {
   if (!request?.username) return null;
+  const registeredEmail = resolveRegisteredEmail(request.username) || request.email;
+  if (!registeredEmail) return null;
+
   const code = generateCode();
   const approvedAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + APPROVAL_CODE_TTL_MS).toISOString();
+
+  const sendResult = sendApprovalEmail({
+    username: request.username,
+    email: registeredEmail,
+    code,
+    expiresAt,
+  });
 
   const updated = loadMinorRequests().map((req) =>
     req.username === request.username
       ? {
           ...req,
-          status: 'APPROVED',
-          approvedAt,
+          email: registeredEmail,
+          status: sendResult.sent ? 'APPROVED' : 'PENDING',
+          approvedAt: sendResult.sent ? approvedAt : null,
           rejectedAt: null,
-          code,
-          expiresAt,
-          delivered: true,
+          code: sendResult.sent ? code : null,
+          expiresAt: sendResult.sent ? expiresAt : null,
+          delivered: sendResult.sent,
+          deliveryError: sendResult.sent ? null : sendResult.reason,
+          redeemedAt: sendResult.sent ? null : req.redeemedAt,
         }
       : req
   );
 
   saveMinorRequests(updated);
-  recordNotification({ ...request, code, expiresAt, approvedAt });
 
-  return { requests: updated, code, approvedAt, expiresAt };
+  return sendResult.sent
+    ? { requests: updated, code, approvedAt, expiresAt }
+    : { requests: updated, error: sendResult.reason };
 };
 
 const rejectMinorRequest = (request) => {
@@ -122,7 +186,16 @@ const rejectMinorRequest = (request) => {
 
   const updated = loadMinorRequests().map((req) =>
     req.username === request.username
-      ? { ...req, status: 'REJECTED', rejectedAt, approvedAt: null, code: null, expiresAt: null, delivered: false }
+      ? {
+          ...req,
+          status: 'REJECTED',
+          rejectedAt,
+          approvedAt: null,
+          code: null,
+          expiresAt: null,
+          delivered: false,
+          redeemedAt: null,
+        }
       : req
   );
 
@@ -135,6 +208,7 @@ const findMinorRequest = (username) => loadMinorRequests().find((req) => req.use
 const isCodeValidForRequest = (request, code) => {
   if (!request || !code) return { valid: false, reason: 'missing' };
   if (request.status !== 'APPROVED' || !request.code) return { valid: false, reason: 'pending' };
+  if (request.redeemedAt) return { valid: false, reason: 'used' };
 
   const trimmedCode = code.trim();
   if (trimmedCode !== request.code) return { valid: false, reason: 'mismatch' };
@@ -146,6 +220,21 @@ const isCodeValidForRequest = (request, code) => {
   return { valid: true };
 };
 
+const markCodeAsRedeemed = (username) => {
+  const updated = loadMinorRequests().map((req) =>
+    req.username === username
+      ? {
+          ...req,
+          code: null,
+          redeemedAt: new Date().toISOString(),
+        }
+      : req
+  );
+
+  saveMinorRequests(updated);
+  return updated;
+};
+
 const hasDeliveredCode = (request) => Boolean(request?.status === 'APPROVED' && request?.code && request?.delivered);
 
 export {
@@ -155,6 +244,7 @@ export {
   hasDeliveredCode,
   isCodeValidForRequest,
   loadMinorRequests,
+  markCodeAsRedeemed,
   rejectMinorRequest,
   saveMinorRequests,
 };

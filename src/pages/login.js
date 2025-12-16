@@ -6,6 +6,7 @@ import {
   findMinorRequest,
   hasDeliveredCode,
   isCodeValidForRequest,
+  markCodeAsRedeemed,
 } from '../helpers/minorAdmin';
 import { DEFAULT_MINOR_ADMIN_PERMISSIONS } from '../helpers/permissions';
 import * as styles from './login.module.css';
@@ -150,7 +151,7 @@ const LoginPage = () => {
     const updatedRequests = addPendingRequest({ username: user.username, email: user.email });
     const existing = updatedRequests.find((req) => req.username === user.username);
     if (existing?.status === 'APPROVED') {
-      setApprovalMessage('You have been approved. Check your email for the code.');
+      setApprovalMessage('You have been approved. A verification code has been sent to your email.');
     } else if (existing?.status === 'REJECTED') {
       setApprovalMessage('Your previous request was rejected. Contact the main admin for next steps.');
     } else if (existing) {
@@ -183,7 +184,7 @@ const LoginPage = () => {
     }
 
     setHasApprovalCode((prev) => !prev);
-    setApprovalMessage('You have been approved. Check your email for the code.');
+    setApprovalMessage('You have been approved. A verification code has been sent to your email.');
   };
 
   const handleApproval = () => {
@@ -217,6 +218,7 @@ const LoginPage = () => {
             : u
         );
         saveUsers(users);
+        markCodeAsRedeemed(pendingUser.username);
         persistSession({
           ...pendingUser,
           role: 'minor-admin',
@@ -231,6 +233,11 @@ const LoginPage = () => {
 
       if (validation.reason === 'expired') {
         setApprovalMessage(CODE_EXPIRED_MESSAGE);
+        return;
+      }
+
+      if (validation.reason === 'used') {
+        setApprovalMessage('That code has already been used. Request a new approval.');
         return;
       }
 

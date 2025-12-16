@@ -13,7 +13,6 @@ import {
   rejectMinorRequest,
   saveMinorRequests,
 } from '../helpers/minorAdmin';
-import { ADMIN_EMAIL_CONFIG } from '../config/email';
 import * as styles from './admin.module.css';
 
 const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
@@ -163,14 +162,22 @@ const AdminPage = () => {
     recordActivity('Deleted journal entry');
   };
 
-  const approveRequest = (request) => {
-    const approval = approveMinorRequest(request);
-    if (!approval) return;
-    const latestRequest = approval.requests.find((req) => req.username === request.username);
-    setMinorRequests(approval.requests);
-    setApprovalModal({ visible: true, request: latestRequest });
-    recordActivity(`Approved minor admin request for ${request.username} (code emailed)`);
-  };
+const approveRequest = (request) => {
+  const approval = approveMinorRequest(request);
+  if (!approval) return;
+  const latestRequest = approval.requests.find((req) => req.username === request.username);
+  setMinorRequests(approval.requests);
+
+  if (approval.error) {
+    recordActivity(
+      `Approval email for ${request.username} failed: ${approval.error}. Request stays pending until delivery succeeds.`
+    );
+    return;
+  }
+
+  setApprovalModal({ visible: true, request: latestRequest });
+  recordActivity(`Approved minor admin request for ${request.username} (code emailed)`);
+};
 
   const denyRequest = (request) => {
     const rejection = rejectMinorRequest(request);
@@ -369,9 +376,14 @@ const AdminPage = () => {
                   <span className={styles.subtext}>{request.email}</span>
                   <span className={statusBadgeClass(request.status)}>{request.status}</span>
                   <span className={styles.smallNote}>Requested {formatDate(request.requestedAt)}</span>
-                  {request.status === 'APPROVED' && request.approvedAt && (
+                  {request.deliveryError && (
                     <span className={styles.smallNote}>
-                      Approved {formatDate(request.approvedAt)} • Code sent from {ADMIN_EMAIL_CONFIG.address}
+                      Email delivery failed ({request.deliveryError}). Confirm the admin sender credentials and try again.
+                    </span>
+                  )}
+                  {request.status === 'APPROVED' && request.approvedAt && !request.deliveryError && (
+                    <span className={styles.smallNote}>
+                      Approved {formatDate(request.approvedAt)} • Code sent to the registered email address
                     </span>
                   )}
                   {request.status === 'REJECTED' && request.rejectedAt && (
@@ -396,7 +408,7 @@ const AdminPage = () => {
             {minorRequests.length > 0 && (
               <p className={styles.smallNote}>
                 Approved requests trigger an email with the approval code using admin-owned credentials. Requests remain
-                visible with their status for audit history.
+                visible with their status and any delivery errors for audit history.
               </p>
             )}
           </div>
@@ -587,9 +599,8 @@ const AdminPage = () => {
         <div className={styles.modalContainer}>
           <h3>Approval code sent</h3>
           <p>
-            A one-time approval code was emailed to{' '}
-            <strong>{approvalModal.request?.email}</strong> from {ADMIN_EMAIL_CONFIG.address}. The user can sign in as a minor
-            admin after entering that code.
+            A one-time approval code was emailed to the user's registered address. The user can sign in as a minor admin
+            after entering that code.
           </p>
 
           <div className={styles.codeBox}>
@@ -597,8 +608,8 @@ const AdminPage = () => {
             <div className={styles.codeBadge}>{approvalModal.request?.code || 'Pending code'}</div>
             {approvalModal.request?.expiresAt && (
               <span className={styles.smallNote}>
-                Expires {formatDate(approvalModal.request?.expiresAt)}. Update ADMIN_EMAIL_ADDRESS and ADMIN_EMAIL_APP_PASSWORD
-                to use live credentials.
+                Expires {formatDate(approvalModal.request?.expiresAt)}. Ensure the admin email credentials are configured to
+                deliver production emails.
               </span>
             )}
           </div>
