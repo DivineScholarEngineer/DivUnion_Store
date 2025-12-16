@@ -16,8 +16,12 @@ const Layout = ({ props, children, disablePaddingBottom = false }) => {
     if (!window.localStorage.getItem('du_db_initialized')) {
       window.localStorage.setItem('du_users', JSON.stringify([]));
       window.localStorage.setItem('du_minor_requests', JSON.stringify([]));
-      window.localStorage.removeItem('du_session');
+      window.localStorage.setItem('du_sessions', JSON.stringify([]));
       window.localStorage.setItem('du_db_initialized', 'true');
+    }
+
+    if (!window.localStorage.getItem('du_sessions')) {
+      window.localStorage.setItem('du_sessions', JSON.stringify([]));
     }
   }, []);
 
