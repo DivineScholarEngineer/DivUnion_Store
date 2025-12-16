@@ -27,7 +27,7 @@ const AboutPage = () => {
         {/* Hero Container */}
         <Hero
           maxWidth={'900px'}
-          image={'/about.png'}
+          image={'/hero/banner-clean.svg'}
           title={`DivUnion Tech \n Built for creators and operators`}
         />
 
