@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { Link, navigate } from 'gatsby';
 import { isEmpty, persistSession } from '../helpers/general';
+import {
+  addPendingRequest,
+  findMinorRequest,
+  hasDeliveredCode,
+  isCodeValidForRequest,
+} from '../helpers/minorAdmin';
 import * as styles from './login.module.css';
 
 import AttributeGrid from '../components/AttributeGrid/AttributeGrid';
@@ -12,7 +18,7 @@ import Modal from '../components/Modal';
 const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
 const MAJOR_ADMIN_EMAIL = 'major.admin@devunion.tech';
 const MAJOR_ADMIN_PASSWORD = 'devunion-major-2024';
-const MINOR_ADMIN_CODE = 'DU-ACCESS-2024';
+const CODE_EXPIRED_MESSAGE = 'The approval code has expired. Request a fresh approval.';
 
 const LoginPage = () => {
   const initialState = {
@@ -128,10 +134,10 @@ const LoginPage = () => {
         return;
       }
 
-        setPendingUser(user);
-        setHasApprovalCode(false);
-        setShowLoginPrompt(true);
-        setApprovalMessage('');
+      setPendingUser(user);
+      setHasApprovalCode(false);
+      setShowLoginPrompt(true);
+      setApprovalMessage('');
     } else {
       setErrorMessage('');
       setErrorForm(tempError);
@@ -139,13 +145,43 @@ const LoginPage = () => {
   };
 
   const sendMinorAdminRequest = (user) => {
-    const stored = window.localStorage.getItem('du_minor_requests');
-    const requests = stored ? JSON.parse(stored) : [];
-    const existingRequest = requests.find((req) => req.username === user.username);
-    if (!existingRequest) {
-      requests.push({ username: user.username, email: user.email });
-      window.localStorage.setItem('du_minor_requests', JSON.stringify(requests));
+    const updatedRequests = addPendingRequest({ username: user.username, email: user.email });
+    const existing = updatedRequests.find((req) => req.username === user.username);
+    if (existing?.status === 'APPROVED') {
+      setApprovalMessage('You have been approved. Check your email for the code.');
+    } else if (existing?.status === 'REJECTED') {
+      setApprovalMessage('Your previous request was rejected. Contact the main admin for next steps.');
+    } else if (existing) {
+      setApprovalMessage('Your request is awaiting review by the main admin.');
+    } else {
+      setApprovalMessage(
+        'Request sent to the main admin. Watch your email for the approval code after it is approved.'
+      );
     }
+  };
+
+  const enableCodeEntryIfApproved = () => {
+    if (!pendingUser) {
+      setApprovalMessage('Sign in first, then request minor admin review.');
+      return;
+    }
+
+    const request = findMinorRequest(pendingUser.username);
+
+    if (!request) {
+      setApprovalMessage('Submit your request before entering an approval code.');
+      setHasApprovalCode(false);
+      return;
+    }
+
+    if (!hasDeliveredCode(request)) {
+      setApprovalMessage('Approval is still pending. A code will unlock once the main admin emails it.');
+      setHasApprovalCode(false);
+      return;
+    }
+
+    setHasApprovalCode((prev) => !prev);
+    setApprovalMessage('You have been approved. Check your email for the code.');
   };
 
   const handleApproval = () => {
@@ -153,9 +189,6 @@ const LoginPage = () => {
 
     if (adminIntent === 'minor-admin' && hasApprovalCode === false) {
       sendMinorAdminRequest(pendingUser);
-      setApprovalMessage(
-        'Request sent to the main admin. Watch your email for the approval code after it is approved.'
-      );
       persistSession({ ...pendingUser, role: pendingUser.role || 'user' });
       navigate('/account');
       return;
@@ -167,7 +200,15 @@ const LoginPage = () => {
         return;
       }
 
-      if (loginForm.approvalCode.trim() === MINOR_ADMIN_CODE) {
+      const request = findMinorRequest(pendingUser.username);
+
+      if (!request || !hasDeliveredCode(request)) {
+        setApprovalMessage('Your request is still pending approval.');
+        return;
+      }
+
+      const validation = isCodeValidForRequest(request, loginForm.approvalCode);
+      if (validation.valid) {
         const users = loadUsers().map((u) =>
           u.username === pendingUser.username ? { ...u, role: 'minor-admin' } : u
         );
@@ -178,6 +219,12 @@ const LoginPage = () => {
         navigate('/account');
         return;
       }
+
+      if (validation.reason === 'expired') {
+        setApprovalMessage(CODE_EXPIRED_MESSAGE);
+        return;
+      }
+
       setApprovalMessage('The code you entered is incorrect. Check your email and try again.');
       return;
     }
@@ -318,9 +365,8 @@ const LoginPage = () => {
                   level={'secondary'}
                   type={'button'}
                   onClick={() => {
-                    setHasApprovalCode((prev) => !prev);
-                    setApprovalMessage('');
                     setLoginForm((prev) => ({ ...prev, approvalCode: '' }));
+                    enableCodeEntryIfApproved();
                   }}
                 >
                   {hasApprovalCode ? 'Request approval instead' : 'I already have a code'}
