@@ -12,11 +12,16 @@ import { getSession, isAuth } from '../../helpers/general';
 import * as styles from './MobileNavigation.module.css';
 
 const MobileNavigation = (props) => {
+  const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
   const { close } = props;
 
   const [subMenu, setSubMenu] = useState();
   const [category, setCategory] = useState();
   const [depth, setDepth] = useState(0);
+
+  const session = isAuth() ? getSession() : null;
+  const isMainAdmin =
+    session?.email === RESERVED_MAIN_ADMIN_EMAIL && session?.role === 'main-admin';
 
   const handleLogout = () => {
     window.localStorage.removeItem('du_session');
@@ -112,6 +117,11 @@ const MobileNavigation = (props) => {
                   </Link>
                 );
               })}
+              {isMainAdmin && (
+                <Link className={`${styles.mobileLink}`} to={'/admin'}>
+                  Admin
+                </Link>
+              )}
               {isAuth() && (
                 <div className={styles.navFooter}>
                   <Link to={'/favorites'}>
@@ -160,6 +170,11 @@ const MobileNavigation = (props) => {
                 <Link to={'/account/orders/'} className={styles.mobileLink}>
                   Orders
                 </Link>
+                {isMainAdmin && (
+                  <Link to={'/admin'} className={styles.mobileLink}>
+                    Admin panel
+                  </Link>
+                )}
                 <Link to={'/account/address/'} className={styles.mobileLink}>
                   Addresses
                 </Link>

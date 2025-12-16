@@ -16,6 +16,7 @@ import MobileNavigation from '../MobileNavigation';
 import * as styles from './Header.module.css';
 
 const Header = (prop) => {
+  const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
   const [showMiniCart, setShowMiniCart] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showMenu, setShowMenu] = useState(true);
@@ -87,6 +88,9 @@ const Header = (prop) => {
     }
   }, [showMiniCart, mobileMenu]);
 
+  const isMainAdmin =
+    session?.email === RESERVED_MAIN_ADMIN_EMAIL && session?.role === 'main-admin';
+
   return (
     <div className={styles.root}>
       <div className={styles.headerMessageContainer}>
@@ -114,6 +118,14 @@ const Header = (prop) => {
                   {navObject.menuLabel}
                 </Link>
               ))}
+              {isMainAdmin && (
+                <Link
+                  className={`${styles.navLink} ${activeMenu === 'Admin' ? styles.activeLink : ''}`}
+                  to={'/admin'}
+                >
+                  Admin
+                </Link>
+              )}
             </nav>
           </div>
           <div
