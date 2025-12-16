@@ -107,7 +107,7 @@ On the homepage of the website and a few other places, there is a full-width ima
 ```jsx
 <Hero
   maxWidth='500px' // how big the image's maxumim should be
-  image={'/banner1.png'} // the source location for the image
+  image={'/hero/banner-clean.svg'} // background art with no embedded text
   title={'Essentials for a cold winter'} // the main text displayed
   subtitle={'Discover Autumn Winter 2021'} // text found below the main text
   ctaText={'shop now'} // the presented text for a user to click on
@@ -115,7 +115,7 @@ On the homepage of the website and a few other places, there is a full-width ima
 />
 ```
 
-You can see it in action under [`src/pages/index.js`](./src/pages/index.js) or see the component in [`src/components/Hero/Hero.js`](./src/components/Hero/Hero.js).
+You can see it in action under [`src/pages/index.js`](./src/pages/index.js) or see the component in [`src/components/Hero/Hero.js`](./src/components/Hero/Hero.js). Hero backgrounds should remain free of baked-in words—render live text through the component props instead of embedding labels inside the artwork.
 
 ### Making content changes to the Header or Footer
 

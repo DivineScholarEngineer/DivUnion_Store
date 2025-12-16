@@ -25,7 +25,7 @@ const IndexPage = () => {
     <Layout disablePaddingBottom>
       <Hero
         maxWidth={'520px'}
-        image={'/tech/hero-primary.svg'}
+        image={'/hero/banner-clean.svg'}
         title={'DivUnion Tech'}
         subtitle={'Signal-first gear, apparel, and accessories built for builders.'}
         ctaText={'Shop the collection'}

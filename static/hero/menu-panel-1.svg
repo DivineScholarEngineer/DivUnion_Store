@@ -1,0 +1,22 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="panelBg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111C3E" />
+      <stop offset="100%" stop-color="#13284F" />
+    </linearGradient>
+    <linearGradient id="panelBeam1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6CEBFF" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#8E7CFF" stop-opacity="0.35" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="420" rx="24" fill="url(#panelBg1)" />
+  <rect x="28" y="32" width="584" height="356" rx="20" stroke="#68D7FF" stroke-opacity="0.25" stroke-width="2" />
+  <rect x="52" y="62" width="536" height="296" rx="16" fill="#0F1D3C" fill-opacity="0.85" stroke="#A7E7FF" stroke-opacity="0.25" stroke-width="1.5" />
+  <rect x="82" y="90" width="240" height="32" rx="10" fill="url(#panelBeam1)" />
+  <rect x="82" y="138" width="476" height="14" rx="7" fill="#203765" />
+  <rect x="82" y="162" width="476" height="14" rx="7" fill="#213F73" />
+  <rect x="82" y="186" width="476" height="14" rx="7" fill="#23477F" />
+  <rect x="82" y="218" width="200" height="22" rx="10" fill="#1C2F5B" />
+  <rect x="304" y="218" width="200" height="22" rx="10" fill="#1C2F5B" />
+  <rect x="203" y="248" width="240" height="40" rx="12" fill="url(#panelBeam1)" />
+</svg>
