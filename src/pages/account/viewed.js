@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { navigate } from 'gatsby';
 import * as styles from './viewed.module.css';
 
@@ -11,11 +11,19 @@ import { isAuth } from '../../helpers/general';
 import { generateMockProductData } from '../../helpers/mock';
 
 const RecentlyViewedPage = (props) => {
+  const [canRenderPage, setCanRenderPage] = useState(false);
   const recentlyViewed = generateMockProductData(3, 'featured');
 
-  if (isAuth() === false) {
-    navigate('/login');
-  }
+  useEffect(() => {
+    if (isAuth() === false) {
+      navigate('/login');
+      return;
+    }
+
+    setCanRenderPage(true);
+  }, []);
+
+  if (!canRenderPage) return null;
 
   return (
     <Layout>

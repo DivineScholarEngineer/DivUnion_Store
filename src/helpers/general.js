@@ -57,6 +57,8 @@ function validateStrongPassword(password) {
  */
 function isEmpty(input) {
   if (input === '' || input === null || input === undefined) return true;
+
+  return false;
 }
 
 /**
