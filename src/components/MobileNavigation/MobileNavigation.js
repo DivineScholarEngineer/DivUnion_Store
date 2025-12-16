@@ -3,7 +3,7 @@ import { Link, navigate } from 'gatsby';
 
 import Config from '../../config.json';
 import Icon from '../Icons/Icon';
-import { getSession, isAuth } from '../../helpers/general';
+import { clearActiveSession, getSession, isAuth } from '../../helpers/general';
 
 //TO DO: refactor this to handle multiple nested links to avoid hardcoding 'depth'
 // have to restructure config.json
@@ -24,7 +24,7 @@ const MobileNavigation = (props) => {
     session?.email === RESERVED_MAIN_ADMIN_EMAIL && session?.role === 'main-admin';
 
   const handleLogout = () => {
-    window.localStorage.removeItem('du_session');
+    clearActiveSession();
     navigate('/');
     close();
   };

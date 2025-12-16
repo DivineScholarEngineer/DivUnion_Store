@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, navigate } from 'gatsby';
-import { isEmpty } from '../helpers/general';
+import { isEmpty, persistSession } from '../helpers/general';
 import * as styles from './login.module.css';
 
 import AttributeGrid from '../components/AttributeGrid/AttributeGrid';
@@ -48,13 +48,6 @@ const LoginPage = () => {
 
   const saveUsers = (users) => {
     window.localStorage.setItem('du_users', JSON.stringify(users));
-  };
-
-  const persistSession = (user) => {
-    window.localStorage.setItem(
-      'du_session',
-      JSON.stringify({ username: user.username, role: user.role, email: user.email })
-    );
   };
 
   const handleChange = (id, e) => {

@@ -1,10 +1,12 @@
 import { Link, navigate } from 'gatsby';
 import React from 'react';
+
+import { clearActiveSession } from '../../helpers/general';
 import * as styles from './AccountNav.module.css';
 
 const AccountNav = (props) => {
   const handleLogout = () => {
-    window.localStorage.removeItem('du_session');
+    clearActiveSession();
     navigate('/');
   };
 

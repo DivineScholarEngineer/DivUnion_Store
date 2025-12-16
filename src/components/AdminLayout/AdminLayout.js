@@ -4,7 +4,7 @@ import { navigate } from 'gatsby';
 
 import FormInputField from '../FormInputField/FormInputField';
 import Icon from '../Icons/Icon';
-import { getSession, isAuth } from '../../helpers/general';
+import { clearActiveSession, getSession, isAuth } from '../../helpers/general';
 import * as styles from './AdminLayout.module.css';
 
 const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
@@ -20,7 +20,7 @@ const AdminLayout = ({ children, sidebar, title }) => {
   }, []);
 
   const handleLogout = () => {
-    window.localStorage.removeItem('du_session');
+    clearActiveSession();
     navigate('/login');
   };
 

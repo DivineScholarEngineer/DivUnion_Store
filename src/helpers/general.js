@@ -70,32 +70,111 @@ function isEmpty(input) {
 
     isAuth()
  */
-function isAuth() {
-  const isBrowser = typeof window !== 'undefined';
-  if (!isBrowser) return false;
+const SESSION_COLLECTION_KEY = 'du_sessions';
+const ACTIVE_SESSION_KEY = 'du_active_session_id';
 
-  const session = window.localStorage.getItem('du_session');
-  if (!session) return false;
+function generateSessionId() {
+  return `du_sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
+
+function getStoredSessions() {
+  const isBrowser = typeof window !== 'undefined';
+  if (!isBrowser) return [];
+
+  const sessions = window.localStorage.getItem(SESSION_COLLECTION_KEY);
+  if (!sessions) return [];
 
   try {
-    const parsedSession = JSON.parse(session);
-    return Boolean(parsedSession?.username && parsedSession?.role);
+    return JSON.parse(sessions);
   } catch (error) {
-    return false;
+    return [];
+  }
+}
+
+function saveStoredSessions(sessions) {
+  if (typeof window === 'undefined') return;
+
+  window.localStorage.setItem(SESSION_COLLECTION_KEY, JSON.stringify(sessions));
+}
+
+function setActiveSession(sessionId) {
+  if (typeof window === 'undefined') return;
+
+  window.sessionStorage.setItem(ACTIVE_SESSION_KEY, sessionId);
+}
+
+function getActiveSessionId() {
+  const isBrowser = typeof window !== 'undefined';
+  if (!isBrowser) return null;
+
+  return window.sessionStorage.getItem(ACTIVE_SESSION_KEY);
+}
+
+function persistSession(user) {
+  if (typeof window === 'undefined') return null;
+
+  const session = { ...user, id: generateSessionId() };
+  const sessions = getStoredSessions();
+
+  saveStoredSessions([...sessions, session]);
+  setActiveSession(session.id);
+
+  return session;
+}
+
+function clearActiveSession() {
+  if (typeof window === 'undefined') return;
+
+  const activeSessionId = getActiveSessionId();
+  const sessions = getStoredSessions();
+
+  const filteredSessions = activeSessionId
+    ? sessions.filter((session) => session.id !== activeSessionId)
+    : sessions;
+
+  saveStoredSessions(filteredSessions);
+
+  if (activeSessionId) {
+    window.sessionStorage.removeItem(ACTIVE_SESSION_KEY);
   }
 }
 
 function getSession() {
   const isBrowser = typeof window !== 'undefined';
   if (!isBrowser) return null;
-  const session = window.localStorage.getItem('du_session');
-  if (!session) return null;
 
-  try {
-    return JSON.parse(session);
-  } catch (error) {
+  const activeSessionId = getActiveSessionId();
+  const storedSessions = getStoredSessions();
+
+  if (!activeSessionId) {
+    const legacySession = window.localStorage.getItem('du_session');
+    if (legacySession) {
+      try {
+        const parsedLegacy = JSON.parse(legacySession);
+        const migratedSession = persistSession(parsedLegacy);
+        window.localStorage.removeItem('du_session');
+        return migratedSession;
+      } catch (error) {
+        return null;
+      }
+    }
+
     return null;
   }
+
+  const activeSession = storedSessions.find((session) => session.id === activeSessionId);
+  if (activeSession) return activeSession;
+
+  window.sessionStorage.removeItem(ACTIVE_SESSION_KEY);
+  return null;
+}
+
+function isAuth() {
+  const session = getSession();
+
+  if (!session) return false;
+
+  return Boolean(session?.username && session?.role);
 }
 
 /**
@@ -113,4 +192,14 @@ function toOptimizedImage(imageUrl) {
           "imgcdn=true";
 }
 
-export { isNumeric, validateEmail, validateStrongPassword, isEmpty, isAuth, getSession, toOptimizedImage };
+export {
+  isNumeric,
+  validateEmail,
+  validateStrongPassword,
+  isEmpty,
+  isAuth,
+  getSession,
+  toOptimizedImage,
+  persistSession,
+  clearActiveSession,
+};
