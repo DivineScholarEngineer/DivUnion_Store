@@ -7,6 +7,8 @@ This beautiful theme from the [Matter Design Team](https://matterdesign.com.au/)
 - [Prettier](https://prettier.io/)
 - [React Helmet](https://github.com/nfl/react-helmet)
 
+> **Hard Rule:** “Sydney” must not appear anywhere in the UI, metadata, SEO, source code, build output, or deployed site. If found, it is a bug and must be removed immediately and replaced with “DivUnion Tech” using the same font, size, and weight.
+
 Take a look at the screenshot below or preview the live site here: https://gatsby-ecommerce-theme.netlify.app/!
 ![full page screenshot](https://res.cloudinary.com/dzkoxrsdj/image/upload/v1653371030/CleanShot_2022-05-24_at_01.11.52_2x_bspa8c.jpg)
 

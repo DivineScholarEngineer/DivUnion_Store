@@ -6,12 +6,24 @@
     gap: 12px;
 }
 
-.wordmark {
+.brandTitle {
+    margin: 0;
     font-family: var(--brand-font);
     font-weight: 800;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     font-size: 16px;
+    line-height: 1.1;
+}
+
+:global(.brand-title) {
+    margin: 0;
+    font-family: var(--brand-font);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 1.1;
 }
 
 @media (max-width: 800px) {
@@ -20,7 +32,11 @@
         height: 16.67px;
     }
 
-    .wordmark {
+    .brandTitle {
+        font-size: 14px;
+    }
+
+    :global(.brand-title) {
         font-size: 14px;
     }
 }
