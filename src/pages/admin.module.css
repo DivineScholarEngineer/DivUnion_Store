@@ -19,6 +19,41 @@
   color: #e0f2fe;
 }
 
+.modalContainer {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalContainer h3 {
+  margin: 0;
+  color: #e0f2fe;
+}
+
+.codeBox {
+  border: 1px solid #1f2a44;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #0b1220;
+}
+
+.codeBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid #1f2a44;
+  color: #bfdbfe;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
 .value {
   font-size: 28px;
   font-weight: 800;

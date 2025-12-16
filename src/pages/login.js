@@ -33,6 +33,7 @@ const LoginPage = () => {
   const [showAdminPrompt, setShowAdminPrompt] = useState(false);
   const [adminIntent, setAdminIntent] = useState('support');
   const [approvalMessage, setApprovalMessage] = useState('');
+  const [hasApprovalCode, setHasApprovalCode] = useState(false);
   const [pendingUser, setPendingUser] = useState(null);
 
   const loadUsers = () => {
@@ -59,6 +60,16 @@ const LoginPage = () => {
   const handleChange = (id, e) => {
     const tempForm = { ...loginForm, [id]: e };
     setLoginForm(tempForm);
+  };
+
+  const handleIntentChange = (intent) => {
+    setAdminIntent(intent);
+
+    if (intent !== 'minor-admin') {
+      setHasApprovalCode(false);
+      setApprovalMessage('');
+      setLoginForm((prev) => ({ ...prev, approvalCode: '' }));
+    }
   };
 
   const resolveUser = () => {
@@ -124,9 +135,10 @@ const LoginPage = () => {
         return;
       }
 
-      setPendingUser(user);
-      setShowLoginPrompt(true);
-      setApprovalMessage('');
+        setPendingUser(user);
+        setHasApprovalCode(false);
+        setShowLoginPrompt(true);
+        setApprovalMessage('');
     } else {
       setErrorMessage('');
       setErrorForm(tempError);
@@ -146,25 +158,34 @@ const LoginPage = () => {
   const handleApproval = () => {
     if (!pendingUser) return;
 
-    if (adminIntent === 'minor-admin' && loginForm.approvalCode.trim() === '') {
+    if (adminIntent === 'minor-admin' && hasApprovalCode === false) {
       sendMinorAdminRequest(pendingUser);
-      setApprovalMessage('Request sent to the main admin. Enter the approval code when it arrives.');
+      setApprovalMessage(
+        'Request sent to the main admin. Watch your email for the approval code after it is approved.'
+      );
       persistSession({ ...pendingUser, role: pendingUser.role || 'user' });
       navigate('/account');
       return;
     }
 
-    if (adminIntent === 'minor-admin' && loginForm.approvalCode.trim() !== '') {
+    if (adminIntent === 'minor-admin' && hasApprovalCode === true) {
+      if (loginForm.approvalCode.trim() === '') {
+        setApprovalMessage('Enter the approval code that was emailed to you.');
+        return;
+      }
+
       if (loginForm.approvalCode.trim() === MINOR_ADMIN_CODE) {
         const users = loadUsers().map((u) =>
           u.username === pendingUser.username ? { ...u, role: 'minor-admin' } : u
         );
         saveUsers(users);
         persistSession({ ...pendingUser, role: 'minor-admin' });
+        setApprovalMessage('');
+        setHasApprovalCode(false);
         navigate('/account');
         return;
       }
-      setApprovalMessage('Enter the approval code emailed by the main admin.');
+      setApprovalMessage('The code you entered is incorrect. Check your email and try again.');
       return;
     }
 
@@ -265,7 +286,7 @@ const LoginPage = () => {
                 name="intent"
                 value="support"
                 checked={adminIntent === 'support'}
-                onChange={() => setAdminIntent('support')}
+                onChange={() => handleIntentChange('support')}
               />
               <span>Standard user (shop & track orders)</span>
             </label>
@@ -275,7 +296,7 @@ const LoginPage = () => {
                 name="intent"
                 value="minor-admin"
                 checked={adminIntent === 'minor-admin'}
-                onChange={() => setAdminIntent('minor-admin')}
+                onChange={() => handleIntentChange('minor-admin')}
               />
               <span>Request minor admin review</span>
             </label>
@@ -284,17 +305,34 @@ const LoginPage = () => {
           {adminIntent === 'minor-admin' && (
             <div className={styles.codeBlock}>
               <p>
-                Enter the approval code you received in your email to unlock
-                minor admin tooling. If you do not have one yet, submitting will
-                send a request to the main admin.
+                Request minor admin approval. Once the main admin approves, an
+                approval code will be emailed to the address tied to your
+                account. Use that code to unlock the limited admin tools.
               </p>
-              <FormInputField
-                id={'approvalCode'}
-                value={loginForm.approvalCode}
-                handleChange={(id, e) => handleChange(id, e)}
-                labelName={'Approval code'}
-                placeholder={'XXXX-XXXX'}
-              />
+
+              {hasApprovalCode && (
+                <FormInputField
+                  id={'approvalCode'}
+                  value={loginForm.approvalCode}
+                  handleChange={(id, e) => handleChange(id, e)}
+                  labelName={'Enter approval code'}
+                  placeholder={'XXXX-XXXX'}
+                />
+              )}
+
+              <div className={styles.intentActions}>
+                <Button
+                  level={'secondary'}
+                  type={'button'}
+                  onClick={() => {
+                    setHasApprovalCode((prev) => !prev);
+                    setApprovalMessage('');
+                    setLoginForm((prev) => ({ ...prev, approvalCode: '' }));
+                  }}
+                >
+                  {hasApprovalCode ? 'Request approval instead' : 'I already have a code'}
+                </Button>
+              </div>
             </div>
           )}
 
@@ -303,7 +341,9 @@ const LoginPage = () => {
               Back
             </Button>
             <Button level={'primary'} onClick={handleApproval}>
-              Continue
+              {adminIntent === 'minor-admin' && hasApprovalCode === false
+                ? 'Request approval'
+                : 'Continue'}
             </Button>
           </div>
 

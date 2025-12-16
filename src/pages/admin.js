@@ -4,6 +4,7 @@ import { Link, navigate } from 'gatsby';
 import AdminLayout from '../components/AdminLayout/AdminLayout';
 import Button from '../components/Button';
 import FormInputField from '../components/FormInputField/FormInputField';
+import Modal from '../components/Modal';
 import { getSession, isAuth } from '../helpers/general';
 import products from '../helpers/product.json';
 import * as styles from './admin.module.css';
@@ -49,6 +50,7 @@ const AdminPage = () => {
   const [productCatalog, setProductCatalog] = useState([]);
   const [activityLog, setActivityLog] = useState([]);
   const [roleUpdate, setRoleUpdate] = useState({ email: '', role: 'user' });
+  const [approvalModal, setApprovalModal] = useState({ visible: false, request: null });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -105,6 +107,12 @@ const AdminPage = () => {
     setActivityLog((prev) => [{ message, timestamp }, ...prev].slice(0, 50));
   };
 
+  const queueApprovalEmail = (request) => {
+    const pending = loadFromStorage('du_minor_notifications', []);
+    const payload = { ...request, code: MINOR_ADMIN_CODE, timestamp: new Date().toISOString() };
+    saveToStorage('du_minor_notifications', [payload, ...pending].slice(0, 50));
+  };
+
   const totalUsers = users.length;
   const totalOrders = orders.length;
   const lowStock = productCatalog.filter((item) => item.inventory < 10).length;
@@ -146,7 +154,9 @@ const AdminPage = () => {
     const remaining = minorRequests.filter((req) => req.username !== request.username);
     setMinorRequests(remaining);
     saveToStorage('du_minor_requests', remaining);
-    recordActivity(`Approved minor admin request for ${request.username}`);
+    queueApprovalEmail(request);
+    setApprovalModal({ visible: true, request });
+    recordActivity(`Approved minor admin request for ${request.username} (code emailed)`);
   };
 
   const denyRequest = (request) => {
@@ -358,7 +368,8 @@ const AdminPage = () => {
             ))}
             {minorRequests.length > 0 && (
               <p className={styles.smallNote}>
-                Approvals share the current code: <strong>{MINOR_ADMIN_CODE}</strong>. Users enter the code to unlock minor admin mode.
+                Approved requests trigger an email with the approval code. Users must enter that code during sign-in to unlock
+                minor admin mode.
               </p>
             )}
           </div>
@@ -541,6 +552,34 @@ const AdminPage = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        visible={approvalModal.visible}
+        close={() => setApprovalModal({ visible: false, request: null })}
+      >
+        <div className={styles.modalContainer}>
+          <h3>Approval code sent</h3>
+          <p>
+            A one-time approval code was emailed to{' '}
+            <strong>{approvalModal.request?.email}</strong>. The user can sign in as a
+            minor admin after entering that code.
+          </p>
+
+          <div className={styles.codeBox}>
+            <span className={styles.subtext}>Current approval code</span>
+            <div className={styles.codeBadge}>{MINOR_ADMIN_CODE}</div>
+          </div>
+
+          <div className={styles.inlineActions}>
+            <Button
+              level={'primary'}
+              onClick={() => setApprovalModal({ visible: false, request: null })}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </AdminLayout>
   );
 };

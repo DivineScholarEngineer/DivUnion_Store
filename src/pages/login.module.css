@@ -33,6 +33,11 @@
     gap: 12px;
 }
 
+.intentActions {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .modalActions {
     display: flex;
     gap: 12px;
