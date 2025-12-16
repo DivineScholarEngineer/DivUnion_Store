@@ -25,7 +25,10 @@ const MinorAdminPage = () => {
     }
 
     const activeSession = getSession();
-    if (activeSession?.role !== 'minor-admin') {
+    const isMainAdmin = activeSession?.role === 'main-admin';
+    const isMinorAdmin = activeSession?.role === 'minor-admin';
+
+    if (!isMinorAdmin && !isMainAdmin) {
       navigate('/account');
       return;
     }

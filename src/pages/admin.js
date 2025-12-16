@@ -5,7 +5,7 @@ import AdminLayout from '../components/AdminLayout/AdminLayout';
 import Button from '../components/Button';
 import FormInputField from '../components/FormInputField/FormInputField';
 import Modal from '../components/Modal';
-import { getSession, isAuth } from '../helpers/general';
+import { getSession, isAuth, setActiveMode } from '../helpers/general';
 import products from '../helpers/product.json';
 import {
   approveMinorRequest,
@@ -82,7 +82,20 @@ const AdminPage = () => {
       return;
     }
 
-    setSession(storedSession);
+    const updatedSession = setActiveMode('main-admin') || {
+      ...storedSession,
+      mode: 'main-admin',
+    };
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('du:mode-changed', { detail: 'main-admin' }));
+    }
+
+    setSession({
+      ...storedSession,
+      ...updatedSession,
+      mode: 'main-admin',
+    });
     setUsers(loadFromStorage('du_users', []));
     setJournalEntries(loadFromStorage('du_journal', []));
     setMinorRequests(loadMinorRequests());

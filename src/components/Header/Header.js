@@ -108,6 +108,8 @@ const Header = (prop) => {
   const activeMode = session?.mode || 'user';
   const isMinorAdmin = session?.role === 'minor-admin';
   const isMinorAdminMode = isMinorAdmin && activeMode === 'minor-admin';
+  const isMainAdminMode = isMainAdmin && activeMode === 'main-admin';
+  const isAdminMode = isMinorAdminMode || isMainAdminMode;
 
   return (
     <div className={styles.root}>
@@ -121,7 +123,7 @@ const Header = (prop) => {
                 setShowMenu(false);
               }}
             >
-              {!isMinorAdminMode &&
+              {!isAdminMode &&
                 Config.headerLinks.map((navObject) => (
                   <Link
                     key={navObject.menuLink}
@@ -142,9 +144,9 @@ const Header = (prop) => {
                   Admin
                 </Link>
               )}
-              {isMinorAdminMode && (
+              {isAdminMode && (
                 <span className={`${styles.navLink} ${styles.modeNotice}`}>
-                  Minor admin mode active — shopper navigation is hidden
+                  Admin mode active — shopper navigation is hidden
                 </span>
               )}
             </nav>
@@ -152,7 +154,7 @@ const Header = (prop) => {
           <div
             role={'presentation'}
             onClick={() => {
-              if (isMinorAdminMode) return;
+              if (isAdminMode) return;
               setMobileMenu(!mobileMenu);
               // setDepth(0);
             }}
@@ -161,12 +163,16 @@ const Header = (prop) => {
             <Icon symbol={`${mobileMenu === true ? 'cross' : 'burger'}`}></Icon>
           </div>
           <Brand />
-          {isMinorAdminMode && (
+          {isAdminMode && (
             <div className={styles.modeBadge}>
               <span className={styles.badgeDot} />
               <div>
-                <span className={styles.badgeTitle}>DivUnion Tech — Minor Admin</span>
-                <span className={styles.badgeSubtitle}>User browsing is disabled while admin tools are open</span>
+                <span className={styles.badgeTitle}>
+                  DivUnion Tech — {isMainAdminMode ? 'Main Admin' : 'Minor Admin'}
+                </span>
+                <span className={styles.badgeSubtitle}>
+                  User browsing is disabled while admin tools are open
+                </span>
               </div>
             </div>
           )}
@@ -175,7 +181,7 @@ const Header = (prop) => {
               aria-label="Search"
               className={`${styles.iconButton} ${styles.iconContainer}`}
               onClick={() => {
-                if (isMinorAdminMode) return;
+                if (isAdminMode) return;
                 setShowSearch(!showSearch);
               }}
             >
@@ -186,10 +192,10 @@ const Header = (prop) => {
                 aria-label="Favorites"
                 href="/account/favorites"
                 className={`${styles.iconContainer} ${styles.hideOnMobile} ${
-                  isMinorAdminMode ? styles.iconDisabled : ''
+                  isAdminMode ? styles.iconDisabled : ''
                 }`}
                 onClick={(e) => {
-                  if (isMinorAdminMode) {
+                  if (isAdminMode) {
                     e.preventDefault();
                     return;
                   }
@@ -207,20 +213,20 @@ const Header = (prop) => {
             </button>
             {isAuth() && (
               <button
-                aria-label="Cart"
-                className={`${styles.iconButton} ${styles.iconContainer} ${styles.bagIconContainer}`}
-                disabled={isMinorAdminMode}
-                onClick={() => {
-                  if (isMinorAdminMode) return;
-                  setShowMiniCart(true);
-                  setMobileMenu(false);
-                }}
-              >
-                <Icon symbol={'bag'}></Icon>
-                {!isMinorAdminMode && (
-                  <div className={styles.bagNotification}>
-                    <span>1</span>
-                  </div>
+              aria-label="Cart"
+              className={`${styles.iconButton} ${styles.iconContainer} ${styles.bagIconContainer}`}
+              disabled={isAdminMode}
+              onClick={() => {
+                if (isAdminMode) return;
+                setShowMiniCart(true);
+                setMobileMenu(false);
+              }}
+            >
+              <Icon symbol={'bag'}></Icon>
+              {!isAdminMode && (
+                <div className={styles.bagNotification}>
+                  <span>1</span>
+                </div>
                 )}
               </button>
             )}
