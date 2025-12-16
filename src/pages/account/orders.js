@@ -14,20 +14,23 @@ import { generateMockProductData } from '../../helpers/mock';
 const ORDER_STORAGE_KEY = 'orders';
 
 const OrderPage = () => {
+  const [canRenderPage, setCanRenderPage] = useState(false);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     if (isAuth() === false) {
       navigate('/login');
       return;
     }
 
-    if (typeof window !== 'undefined') {
-      const storedOrders = window.localStorage.getItem(ORDER_STORAGE_KEY);
-      if (storedOrders) {
-        setOrders(JSON.parse(storedOrders));
-      }
+    const storedOrders = window.localStorage.getItem(ORDER_STORAGE_KEY);
+    if (storedOrders) {
+      setOrders(JSON.parse(storedOrders));
     }
+
+    setCanRenderPage(true);
   }, []);
 
   useEffect(() => {
@@ -35,6 +38,8 @@ const OrderPage = () => {
       window.localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
     }
   }, [orders]);
+
+  if (!canRenderPage) return null;
 
   const removeOrder = (id) => {
     setOrders((prev) => prev.filter((order) => order.id !== id));
