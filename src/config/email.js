@@ -1,6 +1,6 @@
 export const ADMIN_EMAIL_CONFIG = {
-  address: process.env.GATSBY_ADMIN_EMAIL_ADDRESS || 'YOUR_EMAIL_HERE',
-  appPassword: process.env.GATSBY_ADMIN_EMAIL_APP_PASSWORD || 'YOUR_APP_PASSWORD_HERE',
+  address: process.env.GATSBY_ADMIN_EMAIL_ADDRESS || 'divinewos@gmail.com',
+  appPassword: process.env.GATSBY_ADMIN_EMAIL_APP_PASSWORD || '',
 };
 
 export const EMAIL_DELIVERY_NOTES =
