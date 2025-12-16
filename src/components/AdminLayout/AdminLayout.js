@@ -4,6 +4,7 @@ import { navigate } from 'gatsby';
 
 import FormInputField from '../FormInputField/FormInputField';
 import Icon from '../Icons/Icon';
+import RoleModeBar from '../RoleModeBar/RoleModeBar';
 import { clearActiveSession, getSession, isAuth } from '../../helpers/general';
 import * as styles from './AdminLayout.module.css';
 
@@ -34,6 +35,7 @@ const AdminLayout = ({ children, sidebar, title }) => {
 
   return (
     <div className={styles.adminShell}>
+      <RoleModeBar />
       <header className={styles.header}>
         <div className={styles.brandBlock}>
           <div className={styles.brandMark}>DU</div>

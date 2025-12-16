@@ -16,7 +16,10 @@ const RoleModeBar = () => {
     }
   }, []);
 
-  if (!session || session.role !== 'minor-admin') return null;
+  const isMinorAdmin = session?.role === 'minor-admin';
+  const isMainAdmin = session?.role === 'main-admin';
+
+  if (!session || (!isMinorAdmin && !isMainAdmin)) return null;
 
   const isMinorAdminMode = mode === 'minor-admin';
 
@@ -33,8 +36,40 @@ const RoleModeBar = () => {
       return;
     }
 
+    if (nextMode === 'main-admin') {
+      navigate('/admin');
+      return;
+    }
+
     navigate('/account');
   };
+
+  const modeOptions = [
+    {
+      id: 'user',
+      emoji: '🧑',
+      label: 'User',
+      helper: 'Shop, browse, and manage your account',
+    },
+    {
+      id: 'minor-admin',
+      emoji: '🛠️',
+      label: 'Minor Admin',
+      helper: 'Content, moderation, and support tools',
+      visible: isMinorAdmin || isMainAdmin,
+    },
+  ];
+
+  if (isMainAdmin) {
+    modeOptions.push({
+      id: 'main-admin',
+      emoji: '👑',
+      label: 'Main Admin',
+      helper:
+        'Full system control, role assignments, security, and analytics oversight',
+      visible: true,
+    });
+  }
 
   return (
     <div className={styles.root}>
@@ -48,26 +83,21 @@ const RoleModeBar = () => {
         </div>
       </div>
       <div className={styles.tabGroup}>
-        <button
-          className={`${styles.tab} ${mode === 'user' ? styles.activeTab : ''}`}
-          onClick={() => handleModeChange('user')}
-        >
-          <span className={styles.emoji}>🧑</span>
-          <div className={styles.tabCopy}>
-            <span className={styles.tabLabel}>User</span>
-            <span className={styles.tabHelper}>Shop, browse, and manage your account</span>
-          </div>
-        </button>
-        <button
-          className={`${styles.tab} ${isMinorAdminMode ? styles.activeTab : ''}`}
-          onClick={() => handleModeChange('minor-admin')}
-        >
-          <span className={styles.emoji}>🛠️</span>
-          <div className={styles.tabCopy}>
-            <span className={styles.tabLabel}>Minor Admin</span>
-            <span className={styles.tabHelper}>Content, moderation, and support tools</span>
-          </div>
-        </button>
+        {modeOptions
+          .filter((option) => option.visible !== false)
+          .map((option) => (
+            <button
+              key={option.id}
+              className={`${styles.tab} ${mode === option.id ? styles.activeTab : ''}`}
+              onClick={() => handleModeChange(option.id)}
+            >
+              <span className={styles.emoji}>{option.emoji}</span>
+              <div className={styles.tabCopy}>
+                <span className={styles.tabLabel}>{option.label}</span>
+                <span className={styles.tabHelper}>{option.helper}</span>
+              </div>
+            </button>
+          ))}
       </div>
     </div>
   );
