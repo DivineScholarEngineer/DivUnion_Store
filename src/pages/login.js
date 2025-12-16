@@ -7,6 +7,7 @@ import {
   hasDeliveredCode,
   isCodeValidForRequest,
 } from '../helpers/minorAdmin';
+import { DEFAULT_MINOR_ADMIN_PERMISSIONS } from '../helpers/permissions';
 import * as styles from './login.module.css';
 
 import AttributeGrid from '../components/AttributeGrid/AttributeGrid';
@@ -108,6 +109,7 @@ const LoginPage = () => {
           username: 'Major Admin',
           email: MAJOR_ADMIN_EMAIL,
           role: 'major-admin',
+          mode: 'user',
         };
         persistSession(majorAdmin);
         navigate('/account');
@@ -210,10 +212,17 @@ const LoginPage = () => {
       const validation = isCodeValidForRequest(request, loginForm.approvalCode);
       if (validation.valid) {
         const users = loadUsers().map((u) =>
-          u.username === pendingUser.username ? { ...u, role: 'minor-admin' } : u
+          u.username === pendingUser.username
+            ? { ...u, role: 'minor-admin', permissions: DEFAULT_MINOR_ADMIN_PERMISSIONS }
+            : u
         );
         saveUsers(users);
-        persistSession({ ...pendingUser, role: 'minor-admin' });
+        persistSession({
+          ...pendingUser,
+          role: 'minor-admin',
+          permissions: DEFAULT_MINOR_ADMIN_PERMISSIONS,
+          mode: 'user',
+        });
         setApprovalMessage('');
         setHasApprovalCode(false);
         navigate('/account');
@@ -229,14 +238,14 @@ const LoginPage = () => {
       return;
     }
 
-    persistSession({ ...pendingUser, role: pendingUser.role || 'user' });
+    persistSession({ ...pendingUser, role: pendingUser.role || 'user', mode: 'user' });
     navigate('/account');
   };
 
   const handleAdminPath = (destination) => {
     if (!pendingUser) return;
 
-    persistSession({ ...pendingUser, role: 'main-admin' });
+    persistSession({ ...pendingUser, role: 'main-admin', mode: 'user' });
 
     if (destination === 'admin') {
       navigate('/admin');

@@ -88,8 +88,27 @@ const Header = (prop) => {
     }
   }, [showMiniCart, mobileMenu]);
 
+  useEffect(() => {
+    const syncSession = () => {
+      if (isAuth()) {
+        setSession(getSession());
+      } else {
+        setSession(null);
+      }
+    };
+
+    syncSession();
+
+    const handleModeChange = () => syncSession();
+    window.addEventListener('du:mode-changed', handleModeChange);
+    return () => window.removeEventListener('du:mode-changed', handleModeChange);
+  }, []);
+
   const isMainAdmin =
     session?.email === RESERVED_MAIN_ADMIN_EMAIL && session?.role === 'main-admin';
+  const activeMode = session?.mode || 'user';
+  const isMinorAdmin = session?.role === 'minor-admin';
+  const isMinorAdminMode = isMinorAdmin && activeMode === 'minor-admin';
 
   return (
     <div className={styles.root}>
@@ -106,18 +125,19 @@ const Header = (prop) => {
                 setShowMenu(false);
               }}
             >
-              {Config.headerLinks.map((navObject) => (
-                <Link
-                  key={navObject.menuLink}
-                  onMouseEnter={() => handleHover(navObject)}
-                  className={`${styles.navLink} ${
-                    activeMenu === navObject.menuLabel ? styles.activeLink : ''
-                  }`}
-                  to={navObject.menuLink}
-                >
-                  {navObject.menuLabel}
-                </Link>
-              ))}
+              {!isMinorAdminMode &&
+                Config.headerLinks.map((navObject) => (
+                  <Link
+                    key={navObject.menuLink}
+                    onMouseEnter={() => handleHover(navObject)}
+                    className={`${styles.navLink} ${
+                      activeMenu === navObject.menuLabel ? styles.activeLink : ''
+                    }`}
+                    to={navObject.menuLink}
+                  >
+                    {navObject.menuLabel}
+                  </Link>
+                ))}
               {isMainAdmin && (
                 <Link
                   className={`${styles.navLink} ${activeMenu === 'Admin' ? styles.activeLink : ''}`}
@@ -126,11 +146,17 @@ const Header = (prop) => {
                   Admin
                 </Link>
               )}
+              {isMinorAdminMode && (
+                <span className={`${styles.navLink} ${styles.modeNotice}`}>
+                  Minor admin mode active — shopper navigation is hidden
+                </span>
+              )}
             </nav>
           </div>
           <div
             role={'presentation'}
             onClick={() => {
+              if (isMinorAdminMode) return;
               setMobileMenu(!mobileMenu);
               // setDepth(0);
             }}
@@ -139,11 +165,21 @@ const Header = (prop) => {
             <Icon symbol={`${mobileMenu === true ? 'cross' : 'burger'}`}></Icon>
           </div>
           <Brand />
+          {isMinorAdminMode && (
+            <div className={styles.modeBadge}>
+              <span className={styles.badgeDot} />
+              <div>
+                <span className={styles.badgeTitle}>DevUnion Tech — Minor Admin</span>
+                <span className={styles.badgeSubtitle}>User browsing is disabled while admin tools are open</span>
+              </div>
+            </div>
+          )}
           <div className={styles.actionContainers}>
             <button
               aria-label="Search"
               className={`${styles.iconButton} ${styles.iconContainer}`}
               onClick={() => {
+                if (isMinorAdminMode) return;
                 setShowSearch(!showSearch);
               }}
             >
@@ -153,7 +189,15 @@ const Header = (prop) => {
               <Link
                 aria-label="Favorites"
                 href="/account/favorites"
-                className={`${styles.iconContainer} ${styles.hideOnMobile}`}
+                className={`${styles.iconContainer} ${styles.hideOnMobile} ${
+                  isMinorAdminMode ? styles.iconDisabled : ''
+                }`}
+                onClick={(e) => {
+                  if (isMinorAdminMode) {
+                    e.preventDefault();
+                    return;
+                  }
+                }}
               >
                 <Icon symbol={'heart'}></Icon>
               </Link>
@@ -169,15 +213,19 @@ const Header = (prop) => {
               <button
                 aria-label="Cart"
                 className={`${styles.iconButton} ${styles.iconContainer} ${styles.bagIconContainer}`}
+                disabled={isMinorAdminMode}
                 onClick={() => {
+                  if (isMinorAdminMode) return;
                   setShowMiniCart(true);
                   setMobileMenu(false);
                 }}
               >
                 <Icon symbol={'bag'}></Icon>
-                <div className={styles.bagNotification}>
-                  <span>1</span>
-                </div>
+                {!isMinorAdminMode && (
+                  <div className={styles.bagNotification}>
+                    <span>1</span>
+                  </div>
+                )}
               </button>
             )}
             <div className={styles.notificationContainer}>
@@ -255,7 +303,7 @@ const Header = (prop) => {
           hideCross
           top={'98px'}
           isReverse
-          visible={mobileMenu}
+          visible={mobileMenu && !isMinorAdminMode}
           close={() => setMobileMenu(false)}
         >
           <MobileNavigation close={() => setMobileMenu(false)} />

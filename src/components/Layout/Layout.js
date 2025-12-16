@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import Header from '../Header';
 import Footer from '../Footer';
+import RoleModeBar from '../RoleModeBar/RoleModeBar';
 import * as styles from './Layout.module.css';
 
 // CSS not modular here to provide global styles
@@ -42,6 +43,7 @@ const Layout = ({ props, children, disablePaddingBottom = false }) => {
         />
       </Helmet>
 
+      <RoleModeBar />
       <Header />
       <main
         className={`${styles.main} ${
