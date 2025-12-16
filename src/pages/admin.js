@@ -7,10 +7,16 @@ import FormInputField from '../components/FormInputField/FormInputField';
 import Modal from '../components/Modal';
 import { getSession, isAuth } from '../helpers/general';
 import products from '../helpers/product.json';
+import {
+  approveMinorRequest,
+  loadMinorRequests,
+  rejectMinorRequest,
+  saveMinorRequests,
+} from '../helpers/minorAdmin';
+import { ADMIN_EMAIL_CONFIG } from '../config/email';
 import * as styles from './admin.module.css';
 
 const RESERVED_MAIN_ADMIN_EMAIL = 'divinewos@gmail.com';
-const MINOR_ADMIN_CODE = 'DU-ACCESS-2024';
 
 const loadFromStorage = (key, fallback) => {
   const stored = window.localStorage.getItem(key);
@@ -52,6 +58,14 @@ const AdminPage = () => {
   const [roleUpdate, setRoleUpdate] = useState({ email: '', role: 'user' });
   const [approvalModal, setApprovalModal] = useState({ visible: false, request: null });
 
+  const formatDate = (value) => (value ? new Date(value).toLocaleString() : 'Pending timestamp');
+
+  const statusBadgeClass = (status) => {
+    if (status === 'APPROVED') return `${styles.badge} ${styles.badgeSuccess}`;
+    if (status === 'REJECTED') return `${styles.badge} ${styles.badgeDanger}`;
+    return `${styles.badge} ${styles.badgeWarning}`;
+  };
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -72,7 +86,7 @@ const AdminPage = () => {
     setSession(storedSession);
     setUsers(loadFromStorage('du_users', []));
     setJournalEntries(loadFromStorage('du_journal', []));
-    setMinorRequests(loadFromStorage('du_minor_requests', []));
+    setMinorRequests(loadMinorRequests());
     setOrders(loadFromStorage('orders', []));
     setOrderResolutions(loadFromStorage('du_order_resolutions', {}));
 
@@ -102,15 +116,14 @@ const AdminPage = () => {
     saveToStorage('du_order_resolutions', orderResolutions);
   }, [orderResolutions, canRender]);
 
+  useEffect(() => {
+    if (!canRender) return;
+    saveMinorRequests(minorRequests);
+  }, [minorRequests, canRender]);
+
   const recordActivity = (message) => {
     const timestamp = new Date().toISOString();
     setActivityLog((prev) => [{ message, timestamp }, ...prev].slice(0, 50));
-  };
-
-  const queueApprovalEmail = (request) => {
-    const pending = loadFromStorage('du_minor_notifications', []);
-    const payload = { ...request, code: MINOR_ADMIN_CODE, timestamp: new Date().toISOString() };
-    saveToStorage('du_minor_notifications', [payload, ...pending].slice(0, 50));
   };
 
   const totalUsers = users.length;
@@ -151,18 +164,18 @@ const AdminPage = () => {
   };
 
   const approveRequest = (request) => {
-    const remaining = minorRequests.filter((req) => req.username !== request.username);
-    setMinorRequests(remaining);
-    saveToStorage('du_minor_requests', remaining);
-    queueApprovalEmail(request);
-    setApprovalModal({ visible: true, request });
+    const approval = approveMinorRequest(request);
+    if (!approval) return;
+    const latestRequest = approval.requests.find((req) => req.username === request.username);
+    setMinorRequests(approval.requests);
+    setApprovalModal({ visible: true, request: latestRequest });
     recordActivity(`Approved minor admin request for ${request.username} (code emailed)`);
   };
 
   const denyRequest = (request) => {
-    const remaining = minorRequests.filter((req) => req.username !== request.username);
-    setMinorRequests(remaining);
-    saveToStorage('du_minor_requests', remaining);
+    const rejection = rejectMinorRequest(request);
+    if (!rejection) return;
+    setMinorRequests(rejection.requests);
     recordActivity(`Denied minor admin request for ${request.username}`);
   };
 
@@ -348,28 +361,42 @@ const AdminPage = () => {
           </div>
           <div className={styles.panelCard}>
             <h3>Minor admin requests</h3>
-            {minorRequests.length === 0 && <span className={styles.subtext}>No pending requests.</span>}
+            {minorRequests.length === 0 && <span className={styles.subtext}>No minor admin requests yet.</span>}
             {minorRequests.map((request) => (
               <div key={request.username} className={styles.row}>
                 <div className={styles.stack}>
                   <strong>{request.username}</strong>
                   <span className={styles.subtext}>{request.email}</span>
-                  <span className={styles.badge}>Awaiting approval</span>
+                  <span className={statusBadgeClass(request.status)}>{request.status}</span>
+                  <span className={styles.smallNote}>Requested {formatDate(request.requestedAt)}</span>
+                  {request.status === 'APPROVED' && request.approvedAt && (
+                    <span className={styles.smallNote}>
+                      Approved {formatDate(request.approvedAt)} • Code sent from {ADMIN_EMAIL_CONFIG.address}
+                    </span>
+                  )}
+                  {request.status === 'REJECTED' && request.rejectedAt && (
+                    <span className={styles.smallNote}>Rejected {formatDate(request.rejectedAt)}</span>
+                  )}
                 </div>
                 <div className={styles.inlineActions}>
-                  <button className={styles.buttonGhost} onClick={() => approveRequest(request)}>
-                    Approve & send code
-                  </button>
-                  <button className={`${styles.buttonGhost} ${styles.badgeDanger}`} onClick={() => denyRequest(request)}>
-                    Deny
-                  </button>
+                  {request.status === 'PENDING' && (
+                    <>
+                      <button className={styles.buttonGhost} onClick={() => approveRequest(request)}>
+                        Approve & send code
+                      </button>
+                      <button className={`${styles.buttonGhost} ${styles.badgeDanger}`} onClick={() => denyRequest(request)}>
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {request.status !== 'PENDING' && <span className={styles.smallNote}>No further actions.</span>}
                 </div>
               </div>
             ))}
             {minorRequests.length > 0 && (
               <p className={styles.smallNote}>
-                Approved requests trigger an email with the approval code. Users must enter that code during sign-in to unlock
-                minor admin mode.
+                Approved requests trigger an email with the approval code using admin-owned credentials. Requests remain
+                visible with their status for audit history.
               </p>
             )}
           </div>
@@ -561,13 +588,19 @@ const AdminPage = () => {
           <h3>Approval code sent</h3>
           <p>
             A one-time approval code was emailed to{' '}
-            <strong>{approvalModal.request?.email}</strong>. The user can sign in as a
-            minor admin after entering that code.
+            <strong>{approvalModal.request?.email}</strong> from {ADMIN_EMAIL_CONFIG.address}. The user can sign in as a minor
+            admin after entering that code.
           </p>
 
           <div className={styles.codeBox}>
             <span className={styles.subtext}>Current approval code</span>
-            <div className={styles.codeBadge}>{MINOR_ADMIN_CODE}</div>
+            <div className={styles.codeBadge}>{approvalModal.request?.code || 'Pending code'}</div>
+            {approvalModal.request?.expiresAt && (
+              <span className={styles.smallNote}>
+                Expires {formatDate(approvalModal.request?.expiresAt)}. Update ADMIN_EMAIL_ADDRESS and ADMIN_EMAIL_APP_PASSWORD
+                to use live credentials.
+              </span>
+            )}
           </div>
 
           <div className={styles.inlineActions}>
